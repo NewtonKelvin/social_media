@@ -1,0 +1,27 @@
+{
+    "development": {
+      "username": "root",
+      "password": "password",
+      "database": "social_media",
+      "host": "localhost",
+      "dialect": "mysql",
+      "url": "http://192.168.15.81:3000"
+    },
+    "test": {
+      "username": "root",
+      "password": "password",
+      "database": "social_media",
+      "host": "localhost",
+      "dialect": "mysql",
+      "url": "http://192.168.15.81:3000"
+    },
+    "production": {
+      "username": "root",
+      "password": "password",
+      "database": "social_media",
+      "host": "localhost",
+      "dialect": "mysql",
+      "url": "http://192.168.15.81:3000"
+    }
+  }
+  
