@@ -5,6 +5,14 @@ const nextConfig = {
     styledComponents: true,
   },
   reactStrictMode: true,
+  async rewrites() {
+    return [
+      {
+        source: '/newPassword',
+        destination: '/newPassword/index',
+      }
+    ]
+  },
 }
 
 module.exports = nextConfig

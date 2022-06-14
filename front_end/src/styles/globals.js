@@ -7,7 +7,12 @@ import backgroundDark from '../../public/images/background_dark.jpg'
 const Global = {
   "breakpointDesktop": "1564px",
   "breakpointTablet": "768px",
-  "breakpointPhone": "320px"
+  "breakpointPhone": "320px",
+  "xs": "0px",    //extra-small
+  "sm": "600px",  //small
+  "md": "960px",  //medium
+  "lg": "1280px", //large
+  "xl": "1920px"  //extra-large
 }
 
 const Theme = {
@@ -30,6 +35,9 @@ const Theme = {
 }
 
 const GlobalStyle = createGlobalStyle`
+
+  /* RESET */
+
   * {
     margin: 0;
     border: 0;
@@ -62,7 +70,14 @@ const GlobalStyle = createGlobalStyle`
     }
   }
 
-  /* */
+  /* OVERLAP */
+
+  div.MuiAlert-root {
+    border-radius: 10px;
+    font-weight: bold;
+  }
+
+  /* CUSTOM */
 
   input, textarea, button {
     background-color: ${Theme.light.input};
@@ -71,15 +86,20 @@ const GlobalStyle = createGlobalStyle`
   }
 
   a {
+    display: block;
+    width: max-content;
+
     text-decoration: none!important;
     color: ${Theme.light.primary};
     position: relative;
+    font-weight: 500;
     &::before {
       content: '';
       position: absolute;
       width: 70%;
       height: 1px;
       border-radius: 4px;
+      color: ${Theme.light.primary};
       background-color: ${Theme.light.primary};
       bottom: 0;
       left: 15%;

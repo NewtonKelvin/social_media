@@ -15,6 +15,6 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/pages/_document.js", "src/styles/globals.js", "src/components/input.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/pages/_document.js", "src/styles/globals.js", "src/components/input.jsx", "src/components/Task.stories.jsx", "src/services/axios.js", "src/services/api.js", "src/components/alert.stories.jsx"],
   "exclude": ["node_modules"]
 }

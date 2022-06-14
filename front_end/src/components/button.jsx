@@ -21,6 +21,7 @@ const CustomButton = styled.div`
       margin: 0 5px;
       stroke: #FFFFFF;
       stroke-width: 1;
+      height: 70%;
     }
   }
 `

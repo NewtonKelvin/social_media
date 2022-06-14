@@ -6,9 +6,18 @@ export const StyledContainerL = styled.div`
   height: calc(100vh - 10px);
   padding: 5px;
 
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+
+  div.row {
+    height: 100%;
+    margin: 0;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+  }
+
+  div.col {
+    margin: 10px 5px;
+  }
 
   div.col-md-6 > * {
     margin: 5px;
@@ -16,6 +25,11 @@ export const StyledContainerL = styled.div`
 
   a {
     text-align: center;
+    margin: 0 auto;
+  }
+
+  img {
+    padding: 0 60px !important;
   }
 `
 
@@ -28,6 +42,10 @@ export const StyledContainerR = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+
+  .row {
+    margin: 0;
+  }
 
   ul {
     font-weight: bold;
