@@ -24,37 +24,28 @@ module.exports = {
   async register(req, res) {
 
     //Dados
-    const { username, name, email, emailConfirm } = req.body
+    const { username, name, email } = req.body
 
     //Checagem de dados
-    if (!username || username === null || typeof username === undefined) {
-      return res.status(401).json({
-        error: true,
-        message: "Login não pode ser vazio"
-      })
-    }
     if (!name || name == null || typeof name === undefined) {
       return res.status(401).json({
         error: true,
-        message: "Nome não pode ser vazio"
+        message: "Nome não pode ser vazio",
+        field: "name"
+      })
+    }
+    if (!username || username === null || typeof username === undefined) {
+      return res.status(401).json({
+        error: true,
+        message: "Login não pode ser vazio",
+        field: "username"
       })
     }
     if (!email || email == null || typeof email === undefined) {
       return res.status(401).json({
         error: true,
-        message: "Email não pode ser vazio"
-      })
-    }
-    if (!emailConfirm || emailConfirm == null || typeof emailConfirm === undefined) {
-      return res.status(401).json({
-        error: true,
-        message: "Confirme seu email"
-      })
-    }
-    if (email !== emailConfirm) {
-      return res.status(401).json({
-        error: true,
-        message: "Email não bate com confirmação"
+        message: "Email não pode ser vazio",
+        field: "email"
       })
     }
 
@@ -73,7 +64,8 @@ module.exports = {
 
           return res.status(401).json({
             error: true,
-            message: "Já existe um usuário com este email"
+            message: "Já existe um usuário com este email",
+            field: "email"
           })
 
         }
@@ -82,7 +74,8 @@ module.exports = {
 
           return res.status(401).json({
             error: true,
-            message: "Já existe um usuário com este username"
+            message: "Já existe um usuário com este username",
+            field: "username"
           })
 
         }
@@ -162,9 +155,7 @@ module.exports = {
       return res.status(401).json({
         error: true,
         message: "Senha não pode ser vazia",
-        errors: {
-          password: true
-        }
+        field: "password"
       })
     }
 
@@ -172,9 +163,7 @@ module.exports = {
       return res.status(401).json({
         error: true,
         message: "Confirma sua senha",
-        errors: {
-          confirmPassword: true
-        }
+        field: "confirmPassword"
       })
     }
 
@@ -182,9 +171,7 @@ module.exports = {
       return res.status(401).json({
         error: true,
         message: "Confirmação não bate",
-        errors: {
-          confirmPassword: true
-        }
+        field: "confirmPassword"
       })
     }
 
@@ -241,18 +228,14 @@ module.exports = {
       return res.status(200).json({
         error: true,
         message: "Username não pode ser vazio",
-        errors: {
-          username: true
-        }
+        field: "username"
       })
     }
     if (!password || password == null || typeof password === undefined) {
       return res.status(200).json({
         error: true,
         message: "Senha não pode ser vazia",
-        errors: {
-          password: true
-        }
+        field: "password"
       })
     }
 
@@ -292,9 +275,7 @@ module.exports = {
             return res.status(200).json({
               error: true,
               message: "Senhas não batem",
-              errors: {
-                password: true
-              }
+              field: "password"
             })
           }
         });
@@ -303,18 +284,14 @@ module.exports = {
         return res.status(200).json({
           error: true,
           message: "Usuário não encontrado",
-          errors: {
-            username: true
-          }
+          field: "username"
         })
       }
     }).catch((error) => {
       return res.status(200).json({
         error: true,
         message: "Erro ao buscar username: " + error,
-        errors: {
-          username: true
-        }
+        field: "username"
       })
     })
 
@@ -384,9 +361,7 @@ module.exports = {
           return res.status(200).send({
             error: true,
             message: "Email não encontrado na base de dados",
-            errors: {
-              recovery: true
-            }
+            field: "recovery"
           })
         }
       }).catch((error) => {
