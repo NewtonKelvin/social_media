@@ -1,6 +1,6 @@
 # SOCIAL_MEDIA
 
-<img src="https://raw.githubusercontent.com/NewtonKelvin/social_media/871b6237a73878acd0d40edeed597a6b1d60db0b/front_end/public/images/logotipo_blue.svg" width="128"/>
+<img src="https://raw.githubusercontent.com/NewtonKelvin/social_media/871b6237a73878acd0d40edeed597a6b1d60db0b/front_end/public/images/logotipo_name_blue.svg" height="128"/>
 
 Seja bem-vindo!
 
