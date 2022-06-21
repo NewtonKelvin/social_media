@@ -12,10 +12,10 @@ const sequelize = new Sequelize(config.database, config.username, config.passwor
 //Testando conexão com o banco de dados
 sequelize.authenticate()
   .then(() => {
-    console.log('Database conected!')
+    console.log('Database: conected!')
   })
   .catch((error) => {
-    console.log('Database connection fail: ', error)
+    console.log('Database: connection fail: ', error)
   })
 
 module.exports = {

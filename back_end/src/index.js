@@ -6,6 +6,10 @@ const bodyParser = require("body-parser")
 const swaggerUI = require("swagger-ui-express")
 const swaggerDocument = require('./swagger.json');
 
+//Nodemailer
+const nodemailer = require('nodemailer')
+const mailer = require(__dirname + '/../config/nodemailer.json');
+
 const app = express()
 
 //BodyParser
@@ -28,5 +32,16 @@ app.use(
 //Port
 const PORT = 3001
 app.listen(PORT, () => {
-  console.log(`Server running on http://192.168.15.81:${PORT}/v1/`)
+  console.log(`Server: running on http://192.168.15.81:${PORT}/v1/`)
+
+  let transporter = nodemailer.createTransport(mailer);
+
+  transporter.verify(function (error, success) {
+    if (error) {
+      console.log(`Nodemailer: ${error}`);
+    } else {
+      console.log("Nodemailer: Server is ready to take our messages");
+    }
+  });
+
 })

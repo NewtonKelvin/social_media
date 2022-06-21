@@ -21,6 +21,16 @@ let SessionTimeout = 60 * 60 * 1 // 1 Hour
 
 module.exports = {
 
+  //STATUS 200 - SUCCESS (SUCESSO)
+  //STATUS 400 - VALIDATION ERROR (FALTAM DADOS)
+  //STATUS 422 - SERVER CAN NOT EXECUTE (DADOS INVÁLIDOS)
+  //STATUS 403 - FORBIDDEN (REGISTRO DUPLICADO)
+  //STATUS 404 - NOT FOUND (DADOS NÃO ENCONTRADOS)
+  //STATUS 401 - UNAUTHORIZED (SEM PERMISSÃO)
+
+  //STATUS 418 - I'M A TEAPOT (???)
+  //STATUS 500 - INTERNAL SERVER ERROR (ERRO NO SERVIDOR)
+
   async register(req, res) {
 
     //Dados
@@ -28,21 +38,21 @@ module.exports = {
 
     //Checagem de dados
     if (!name || name == null || typeof name === undefined) {
-      return res.status(401).json({
+      return res.status(400).json({
         error: true,
         message: "Nome não pode ser vazio",
         field: "name"
       })
     }
     if (!username || username === null || typeof username === undefined) {
-      return res.status(401).json({
+      return res.status(400).json({
         error: true,
         message: "Login não pode ser vazio",
         field: "username"
       })
     }
     if (!email || email == null || typeof email === undefined) {
-      return res.status(401).json({
+      return res.status(400).json({
         error: true,
         message: "Email não pode ser vazio",
         field: "email"
@@ -119,20 +129,20 @@ module.exports = {
             })
 
           } else {
-            return res.status(400).json({
+            return res.status(500).json({
               error: true,
               message: "Falha ao cadastrar usuário: "
             })
           }
         }).catch((error) => {
-          return res.status(400).json({
+          return res.status(500).json({
             error: true,
             message: "Erro ao cadastrar usuário: " + error
           })
         })
       }
     }).catch((error) => {
-      return res.status(400).json({
+      return res.status(500).json({
         error: true,
         message: "Erro ao checar usuário: " + error
       })
@@ -145,14 +155,14 @@ module.exports = {
     const { token, password, confirmPassword } = req.body
 
     if (!token || token == null || typeof token === undefined) {
-      return res.status(401).json({
+      return res.status(400).json({
         error: true,
         message: "Token não foi inserido"
       })
     }
 
     if (!password || password == null || typeof password === undefined) {
-      return res.status(401).json({
+      return res.status(400).json({
         error: true,
         message: "Senha não pode ser vazia",
         field: "password"
@@ -160,7 +170,7 @@ module.exports = {
     }
 
     if (!confirmPassword || confirmPassword == null || typeof confirmPassword === undefined) {
-      return res.status(401).json({
+      return res.status(400).json({
         error: true,
         message: "Confirma sua senha",
         field: "confirmPassword"
@@ -168,7 +178,7 @@ module.exports = {
     }
 
     if (password !== confirmPassword) {
-      return res.status(401).json({
+      return res.status(422).json({
         error: true,
         message: "Confirmação não bate",
         field: "confirmPassword"
@@ -204,13 +214,13 @@ module.exports = {
         }
 
       } else {
-        return res.status(401).send({
+        return res.status(422).send({
           error: true,
           message: "Link inválido"
         })
       }
     }).catch((error) => {
-      return res.status(400).send({
+      return res.status(500).send({
         error: true,
         message: "Falha ao validar token de reset de senha"
       })
@@ -225,14 +235,14 @@ module.exports = {
 
     //Checagem de dados
     if (!username || username === null || typeof username === undefined) {
-      return res.status(200).json({
+      return res.status(400).json({
         error: true,
         message: "Username não pode ser vazio",
         field: "username"
       })
     }
     if (!password || password == null || typeof password === undefined) {
-      return res.status(200).json({
+      return res.status(400).json({
         error: true,
         message: "Senha não pode ser vazia",
         field: "password"
@@ -249,7 +259,7 @@ module.exports = {
 
         if (!user.password || user.password === null || typeof user.password === undefined) {
           return res.status(200).json({
-            error: true,
+            error: false,
             message: "Primeiro login? Altere sua senha!"
           })
         }
@@ -261,6 +271,7 @@ module.exports = {
             const token = jwt.sign({ uID }, process.env.SECRET);
             return res.send({
               auth: true,
+              message: "Logado com sucesso!",
               token: token,
               error: false,
               user: {
@@ -272,7 +283,7 @@ module.exports = {
               }
             });
           } else {
-            return res.status(200).json({
+            return res.status(422).json({
               error: true,
               message: "Senhas não batem",
               field: "password"
@@ -281,14 +292,14 @@ module.exports = {
         });
 
       } else {
-        return res.status(200).json({
+        return res.status(404).json({
           error: true,
           message: "Usuário não encontrado",
           field: "username"
         })
       }
     }).catch((error) => {
-      return res.status(200).json({
+      return res.status(500).json({
         error: true,
         message: "Erro ao buscar username: " + error,
         field: "username"
@@ -309,7 +320,7 @@ module.exports = {
     const { email } = req.query
 
     if (!email || email === null || typeof email === undefined) {
-      return res.status(200).json({
+      return res.status(400).json({
         error: true,
         message: "Email não pode ser vazio"
       })
@@ -358,21 +369,21 @@ module.exports = {
           })
 
         } else {
-          return res.status(200).send({
+          return res.status(404).send({
             error: true,
             message: "Email não encontrado na base de dados",
             field: "recovery"
           })
         }
       }).catch((error) => {
-        return res.status(200).send({
+        return res.status(500).send({
           error: true,
           message: "Falha ao procurar usuário: " + error
         })
       })
 
     } catch (error) {
-      return res.status(200).send({
+      return res.status(500).send({
         error: true,
         message: "Erro ao enviar email: " + error
       })
@@ -412,7 +423,7 @@ module.exports = {
           });
 
         } else {
-          return res.status(401).send({
+          return res.status(404).send({
             error: true,
             message: 'Usuário não encontrado'
           });
@@ -421,7 +432,6 @@ module.exports = {
       });
 
     }
-    // res.sendStatus(500);
 
   }
 

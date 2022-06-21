@@ -1,10 +1,6 @@
 const express = require('express')
 const routes = express.Router()
 
-//Nodemailer
-const nodemailer = require('nodemailer')
-const mailer = require(__dirname + '/../config/nodemailer.json');
-
 //JWT AUTH
 require("dotenv-safe").config();
 const jwt = require('jsonwebtoken');
@@ -13,7 +9,7 @@ const jwt = require('jsonwebtoken');
 const loginController = require('./controller/login')
 
 //Account
-routes.post('/register', nodemailerCheck, loginController.register)
+routes.post('/register', loginController.register)
 routes.post('/newPassword', loginController.newPassword)
 routes.get('/login', loginController.login)
 routes.get('/logout', verifyJWT, loginController.logout)
@@ -44,20 +40,6 @@ function verifyJWT(req, res, next) {
     next();
   });
 
-}
-
-function nodemailerCheck(req, res, next) {
-  let transporter = nodemailer.createTransport(mailer);
-
-  transporter.verify(function (error, success) {
-    if (error) {
-      console.log(`Nodemailer: ${error}`);
-    } else {
-      console.log("Nodemailer: Server is ready to take our messages");
-    }
-  });
-
-  next();
 }
 
 module.exports = routes
