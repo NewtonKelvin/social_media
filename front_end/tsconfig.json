@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -15,6 +19,24 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/pages/_document.js", "src/styles/globals.js", "src/components/input.jsx", "src/components/Task.stories.jsx", "src/services/axios.js", "src/services/api.js", "src/components/alert.stories.jsx"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    // "src/pages/_document.js",
+    // "src/styles/globals.js",
+    // "src/components/input.jsx",
+    // "src/components/Task.stories.jsx",
+    // "src/services/api.js",
+    // "src/components/alert.stories.jsx",
+    "src/services/axios.ts",
+    "src/styles/login.ts",
+    "src/components/layout.tsx",
+    // "src/components/switch.stories.jsx",
+    // "src/components/switch.jsx",
+    // "src/context/AuthContext.jsx"
+  ],
+  "exclude": [
+    "node_modules",
+  ]
 }

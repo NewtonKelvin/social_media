@@ -1,7 +1,6 @@
 //Next and React
-import { useState } from "react"
+import { useContext, useState } from "react"
 import Head from "next/head"
-import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { useForm, SubmitHandler } from 'react-hook-form'
@@ -12,17 +11,21 @@ import { Box, Grid, Snackbar } from "@mui/material"
 import Slide from '@mui/material/Slide'
 import { Alert, Color } from '@material-ui/lab'
 import { Col, Row } from "react-bootstrap"
+//Context
+import { ThemeContext } from "../_app"
 //Style
 import { StyledContainerL, StyledContainerR } from "../../styles/login"
-//Images
-import Logotipo from "../../../public/images/logotipo_name_blue.svg"
 //Components
 import StyledInput from "../../components/input"
 import StyledButton from "../../components/button"
+import StyledSwitch from "../../components/switch"
 //Icons
-import { AccountCircle, Fingerprint, Tag, Mail } from "@mui/icons-material"
+import { AccountCircle, Fingerprint, Brightness3, WbSunny } from "@mui/icons-material"
+import StyledBrand from "../../components/brand"
 
 export default function Register() {
+
+  const { theme, toggleTheme, isDark } = useContext(ThemeContext)
 
   interface RegisterResponse {
     data: {
@@ -43,7 +46,7 @@ export default function Register() {
   const [alertSeverity, setAlertSeverity] = useState<Color>('error')
 
   const router = useRouter()
-  const { token } = router.query
+  const { newPassword: token } = router.query
 
   const { register, handleSubmit, reset } = useForm<FormValues>()
 
@@ -96,8 +99,14 @@ export default function Register() {
         <Col xl={6} style={{ padding: "0" }}>
           <StyledContainerL>
             <Row>
+
               <Col>
-                <Link href="/login">Back to the login page</Link>
+                <StyledSwitch
+                  iconLeft={<WbSunny />}
+                  iconRight={<Brightness3 />}
+                  checked={isDark}
+                  onChange={() => {toggleTheme(); reset()}}
+                />
               </Col>
 
               <Col
@@ -106,7 +115,7 @@ export default function Register() {
               >
                 <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
 
-                  <Image src={Logotipo} layout="responsive" priority={true} />
+                  <StyledBrand />
 
                   <StyledInput>
                     <label>Password:</label>

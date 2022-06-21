@@ -1,10 +1,11 @@
 //Next and React
-import { useState } from "react"
+import { useContext, useState } from "react"
 import Head from "next/head"
-import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/router"
-import { useForm, SubmitHandler } from 'react-hook-form'
+import { useForm, SubmitHandler } from "react-hook-form"
+//Context
+import { ThemeContext } from "./_app"
 //API
 import { api } from '../services/api'
 //Packages
@@ -14,15 +15,17 @@ import { Alert, Color } from '@material-ui/lab'
 import { Col, Row } from "react-bootstrap"
 //Style
 import { StyledContainerL, StyledContainerR } from "../styles/login"
-//Images
-import Logotipo from "../../public/images/logotipo_name_blue.svg"
 //Components
 import StyledInput from "../components/input"
 import StyledButton from "../components/button"
+import StyledSwitch from "../components/switch"
+import StyledBrand from "../components/brand"
 //Icons
-import { AccountCircle, Fingerprint, Tag, Mail } from "@mui/icons-material"
+import { AccountCircle, Fingerprint, Tag, Mail, Brightness3, WbSunny } from "@mui/icons-material"
 
 export default function Register() {
+
+  const { theme, toggleTheme, isDark } = useContext(ThemeContext)
   
   const router = useRouter()
 
@@ -53,6 +56,7 @@ export default function Register() {
       setTimeout(() => {
         router.push('/login')
       }, 3000)
+      
     }).catch(({response}) => {
 
       setAlertSeverity('error')
@@ -66,7 +70,7 @@ export default function Register() {
   return (
     <>
       <Head>
-        <title>SOCIAL_MEDIA | LOGIN</title>
+        <title>SOCIAL_MEDIA | REGISTER</title>
       </Head>
 
       <Snackbar
@@ -88,8 +92,14 @@ export default function Register() {
         <Col xl={6} style={{ padding: "0" }}>
           <StyledContainerL>
             <Row>
+
               <Col>
-                <Link href="/login">Back to the login page</Link>
+                <StyledSwitch
+                  iconLeft={<WbSunny />}
+                  iconRight={<Brightness3 />}
+                  checked={isDark}
+                  onChange={() => {toggleTheme(); reset()}}
+                />
               </Col>
 
               <Col
@@ -98,7 +108,7 @@ export default function Register() {
               >
                 <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
 
-                  <Image src={Logotipo} layout="responsive" priority={true} />
+                  <StyledBrand />
 
                   <StyledInput>
                     <label>Name:</label>
@@ -142,9 +152,7 @@ export default function Register() {
               </Col>
 
               <Col style={{ display: "flex", alignItems: "end" }}>
-                <Link href="#">
-                  Contact the admin
-                </Link>
+                <Link href="/">Back to home page</Link>
               </Col>
             </Row>
           </StyledContainerL>

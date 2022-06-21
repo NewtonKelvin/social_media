@@ -1,105 +1,102 @@
 //Next and React
-import { useState } from "react"
+import { useContext, useState } from "react"
 import Head from "next/head"
-import Image from "next/image"
 import Link from "next/link"
-import { useForm } from 'react-hook-form'
+import { useForm, SubmitHandler } from "react-hook-form"
+import { useRouter } from "next/router"
+import { AxiosRequestConfig } from "axios"
+//API
+import { api } from "../services/api"
+import { AlertContext, ThemeContext } from "./_app"
+//Context
+import { AuthContext } from '../context/AuthContext'
 //Packages
-import { Box, Grid, Snackbar } from "@mui/material"
-import Slide from '@mui/material/Slide'
 import { Alert, Color } from '@material-ui/lab'
 import { Col, Row } from "react-bootstrap"
 //Style
-import { StyledContainerL, StyledContainerR } from "../styles/login"
-//Images
-import Logotipo from "../../public/images/logotipo_name_blue.svg"
+import StyledContainerL2, { StyledContainerL, StyledContainerR } from "../styles/login"
 //Components
 import StyledInput from "../components/input"
 import StyledButton from "../components/button"
+import StyledSwitch from "../components/switch"
+import StyledBrand from "../components/brand"
 //Icons
-import { AccountCircle, Fingerprint } from "@mui/icons-material"
+import { AccountCircle, Fingerprint, Brightness3, WbSunny } from "@mui/icons-material"
 
 export default function Login() {
 
-  interface LoginErros {
-    username: boolean,
-    password: boolean
+  const { theme, toggleTheme, isDark } = useContext(ThemeContext)
+  const { handleAlertOpen, handleAlertMessage, handleAlertSeverity } = useContext(AlertContext)
+  const { signIn } = useContext(AuthContext)  
+  
+  const router = useRouter()
+
+  interface FormValues {
+    username: string,
+    password: string
   }
 
-  interface LoginFunction {
-    data:(
-      username: string,
-      password: string
-    ) => void
-  }
+  const [errors, setErrors] = useState('')
 
-  const [errors, setErrors] = useState<LoginErros>()
-  const [alertOpen, setAlertOpen] = useState(false)
-  const [alertMessage, setAlertMessage] = useState('')
-  const [alertSeverity, setAlertSeverity] = useState<Color>('error')
+  const { register, handleSubmit, reset } = useForm<FormValues>()
 
-  const { register, handleSubmit } = useForm()
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
 
-  async function handleSignin(data:LoginFunction) {
-
-    /*const response = await signIn(data)
-
-    if (response) {
-      if (response.error === true) {
-        setAlertSeverity('error')
-        setErrors(response.errors)
+    const response = await signIn(data)
+    if(response){
+      
+      if(response.error === false){
+      
+        handleAlertSeverity('success')
+        handleAlertMessage(response.message)
+        setErrors('')
+        handleAlertOpen(true)
+  
+        reset()
+        setTimeout(() => {
+          router.push('/feed')
+        }, 3000)
+  
       } else {
-        setAlertSeverity('success')
+  
+        handleAlertSeverity('error')
+        handleAlertMessage(response.message)
+        setErrors(response.field)
+        handleAlertOpen(true)
+  
       }
 
-      if (response.message === "Primeiro login? Altere sua senha!")
-        handleForgotPassword()
-
-      setAlertMessage(response.message)
-      setAlertOpen(true)
-    }*/
+    }
 
   }
 
   return (
     <>
-
       <Head>
         <title>SOCIAL_MEDIA | LOGIN</title>
       </Head>
 
-      <Snackbar
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        open={alertOpen}
-        autoHideDuration={6000}
-        onClose={() => setAlertOpen(false)}
-        TransitionComponent={Slide}
-      >
-        <Alert
-          onClose={() => setAlertOpen(false)}
-          severity="info"
-        //{alertSeverity}
-        >
-          {alertMessage}
-        </Alert>
-      </Snackbar>
-
       <Row style={{ margin: "0" }}>
         <Col xl={6} style={{ padding: "0" }}>
-
-          <StyledContainerL>
+          <StyledContainerL2 isDark={isDark}>
             <Row>
 
               <Col>
-                <Link href="/">
-                  Back to the home page
-                </Link>
+                <StyledSwitch
+                  iconLeft={<WbSunny />}
+                  iconRight={<Brightness3 />}
+                  checked={isDark}
+                  onChange={() => {toggleTheme(); reset()}}
+                />
               </Col>
 
-              <Col md={{ span: 6, offset: 3 }} style={{ display: "flex", flexDirection: "column" }}>
-                <form onSubmit={handleSubmit(handleSignin)} autoComplete='off'>
+              <Col
+                md={{ span: 6, offset: 3 }}
+                style={{ display: "flex", flexDirection: "column" }}
+              >
+                <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
 
-                  <Image src={Logotipo} layout="responsive" priority={true} />
+                  <StyledBrand />
 
                   <StyledInput>
                     <label>Username:</label>
@@ -107,8 +104,8 @@ export default function Login() {
                     <input
                       type="text"
                       placeholder="Insert your username..."
-                      aria-invalid={errors?.username ? "true" : "false"}
-                      {...register('username')}
+                      aria-invalid={errors == "username" ? "true" : "false"}
+                      {...register("username")}
                     />
                   </StyledInput>
 
@@ -118,61 +115,74 @@ export default function Login() {
                     <input
                       type="password"
                       placeholder="Insert your password..."
-                      aria-invalid={errors?.password ? "true" : "false"}
-                      {...register('password')}
+                      aria-invalid={errors == "password" ? "true" : "false"}
+                      {...register("password")}
                     />
                   </StyledInput>
 
                   <Link href="#">Forgot your password? Click here</Link>
 
                   <StyledButton>
-                    <button type="button">
-                      Login
-                    </button>
+                    <button type="submit">Login</button>
                   </StyledButton>
 
-                  <Link href="/register">Dont have a account? Register here</Link>
-
+                  <Link href="/register">
+                    Dont have a account? Register here
+                  </Link>
                 </form>
               </Col>
 
               <Col style={{ display: "flex", alignItems: "end" }}>
-                <Link href="#">
-                  Contact the admin
-                </Link>
+                <Link href="/">Back to home page</Link>
               </Col>
-
             </Row>
-          </StyledContainerL>
-
+          </StyledContainerL2>
         </Col>
         <Col xl={6} style={{ padding: "0" }}>
-
           <StyledContainerR>
-
             <Row>
-              <Col md={{ span: 8, offset: 2 }} style={{ display: "flex", flexDirection: "column" }}>
-
+              <Col
+                md={{ span: 8, offset: 2 }}
+                style={{ display: "flex", flexDirection: "column" }}
+              >
                 <h1>What is Lorem Ipsum?</h1>
-                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                <p>
+                  Lorem Ipsum is simply dummy text of the printing and
+                  typesetting industry. Lorem Ipsum has been the industry's
+                  standard dummy text ever since the 1500s, when an unknown
+                  printer took a galley of type and scrambled it to make a type
+                  specimen book. It has survived not only five centuries, but
+                  also the leap into electronic typesetting, remaining
+                  essentially unchanged. It was popularised in the 1960s with
+                  the release of Letraset sheets containing Lorem Ipsum
+                  passages, and more recently with desktop publishing software
+                  like Aldus PageMaker including versions of Lorem Ipsum.
+                </p>
                 <ul>
-                  <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
-                  <li>Vivamus faucibus enim molestie lectus cursus, id volutpat risus ullamcorper.</li>
+                  <li>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                  </li>
+                  <li>
+                    Vivamus faucibus enim molestie lectus cursus, id volutpat
+                    risus ullamcorper.
+                  </li>
                   <li>Maecenas pulvinar turpis vel arcu posuere ultrices.</li>
                   <li>Integer sagittis ex eget urna commodo scelerisque.</li>
-                  <li>Nullam dapibus leo eget arcu varius, sit amet porta magna congue.</li>
+                  <li>
+                    Nullam dapibus leo eget arcu varius, sit amet porta magna
+                    congue.
+                  </li>
                   <li>Suspendisse aliquet mauris non est lacinia pretium.</li>
-                  <li>Nunc finibus magna ac metus tincidunt, et dignissim nunc gravida.</li>
+                  <li>
+                    Nunc finibus magna ac metus tincidunt, et dignissim nunc
+                    gravida.
+                  </li>
                 </ul>
-
               </Col>
             </Row>
-
           </StyledContainerR>
-
         </Col>
       </Row>
-
     </>
-  )
+  );
 }

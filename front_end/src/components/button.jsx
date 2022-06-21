@@ -1,4 +1,5 @@
 import styled from "styled-components"
+import { Theme }  from '../styles/globals'
 
 const CustomButton = styled.div`
   margin: 5px;
@@ -8,18 +9,17 @@ const CustomButton = styled.div`
     justify-content: center;
     width: 100%;
     height: 38px;
-    color: #FFFFFF;
-    background: #0A84FF;
+    color: var(--white);
+    background:var(--primary);
     font-weight: bold;
-    transition: all .5s;
 
     &:hover {
-      background-color: #25A6EF;
+      background-color: var(--secondary);
     }
 
     svg {
       margin: 0 5px;
-      stroke: #FFFFFF;
+      stroke: var(--white);
       stroke-width: 1;
       height: 70%;
     }

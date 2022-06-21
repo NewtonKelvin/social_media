@@ -1,11 +1,12 @@
 import styled from "styled-components"
 
 export const StyledContainerL = styled.div`
-  background-color: #FFFFFF !important;
+  background-color: var(--container) !important;
   border-radius: 10px !important;
   height: calc(100vh - 10px);
   padding: 5px;
 
+  transition: all var(--transition);
 
   div.row {
     height: 100%;
@@ -25,11 +26,7 @@ export const StyledContainerL = styled.div`
 
   a {
     text-align: center;
-    margin: 0 auto;
-  }
-
-  img {
-    padding: 0 60px !important;
+    margin: 10px auto;
   }
 `
 
@@ -38,10 +35,13 @@ export const StyledContainerR = styled.div`
   border-radius: 10px !important;
   height: calc(100vh - 10px);
   padding: 5px;
+  color: var(--text);
 
   display: flex;
   flex-direction: column;
   justify-content: center;
+  
+  transition: all var(--transition);
 
   .row {
     margin: 0;
@@ -55,3 +55,10 @@ export const StyledContainerR = styled.div`
     display: none;
   }
 `
+export default function StyledContainerL2({ children, isDark }) {
+  return (
+    <StyledContainerL isDark={isDark}>
+      {children}
+    </StyledContainerL>
+  );
+}

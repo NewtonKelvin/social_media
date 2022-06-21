@@ -10,6 +10,11 @@ const nextConfig = {
       {
         source: '/newPassword',
         destination: '/newPassword/index',
+      },
+      
+      {
+        source: '/feed',
+        destination: '/system/feed',
       }
     ]
   },

@@ -1,5 +1,4 @@
 // YourComponent.stories.js|jsx
-
 import StyledInput from "./input";
 //Icons
 import { AccountCircle, Fingerprint, Check } from "@mui/icons-material"
