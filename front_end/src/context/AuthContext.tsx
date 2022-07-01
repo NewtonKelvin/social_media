@@ -10,8 +10,10 @@ import { CommonHeaderProperties } from "../services/axios"
 interface User {
   id: number,
   name: string,
+  username: string,
   email: string,
-  avatar: string
+  avatar: string,
+  cover: string
 }
 
 interface SignInData {

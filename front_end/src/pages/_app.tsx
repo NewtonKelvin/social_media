@@ -34,7 +34,7 @@ if (typeof window !== "undefined") {
 }
 
 type ThemeContextType = {
-  theme: String,
+  theme: string,
   isDark: boolean,
   toggleTheme: () => void
 }
@@ -85,8 +85,8 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   }, [theme])
 
   function toggleTheme(){
-    var newTheme = null
-    var newIsDark = false
+    let newTheme = null
+    let newIsDark = false
     if(theme == 'light'){
 
       newTheme = 'dark'

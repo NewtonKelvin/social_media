@@ -12,7 +12,7 @@ import Slide from '@mui/material/Slide'
 import { Alert, Color } from '@material-ui/lab'
 import { Col, Row } from "react-bootstrap"
 //Context
-import { ThemeContext } from "../_app"
+import { ThemeContext, AlertContext } from "../_app"
 //Style
 import { StyledContainerL, StyledContainerR } from "../../styles/login"
 //Components
@@ -26,6 +26,7 @@ import StyledBrand from "../../components/brand"
 export default function Register() {
 
   const { theme, toggleTheme, isDark } = useContext(ThemeContext)
+  const { handleAlertOpen, handleAlertMessage, handleAlertSeverity } = useContext(AlertContext)
 
   interface RegisterResponse {
     data: {
@@ -41,9 +42,6 @@ export default function Register() {
   }
 
   const [errors, setErrors] = useState('')
-  const [alertOpen, setAlertOpen] = useState(false)
-  const [alertMessage, setAlertMessage] = useState('')
-  const [alertSeverity, setAlertSeverity] = useState<Color>('error')
 
   const router = useRouter()
   const { newPassword: token } = router.query
@@ -55,10 +53,10 @@ export default function Register() {
     const response:any = await api.post('/newPassword', {...data, token})
     .then((response) => {
       
-      setAlertSeverity('success')
-      setAlertMessage(response.data.message)
+      handleAlertSeverity('success')
+      handleAlertMessage(response.data.message)
       setErrors('')
-      setAlertOpen(true)
+      handleAlertOpen(true)
 
       reset()
       setTimeout(() => {
@@ -66,10 +64,10 @@ export default function Register() {
       }, 3000)
     }).catch(({response}) => {
 
-      setAlertSeverity('error')
-      setAlertMessage(response.data.message)
+      handleAlertSeverity('error')
+      handleAlertMessage(response.data.message)
       setErrors(response.data.field)
-      setAlertOpen(true)
+      handleAlertOpen(true)
 
     })
 
@@ -79,21 +77,6 @@ export default function Register() {
       <Head>
         <title>SOCIAL_MEDIA | NEW PASSWORD</title>
       </Head>
-
-      <Snackbar
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        open={alertOpen}
-        autoHideDuration={6000}
-        onClose={() => setAlertOpen(false)}
-        TransitionComponent={Slide}
-      >
-        <Alert
-          onClose={() => setAlertOpen(false)}
-          severity={alertSeverity}
-        >
-          {alertMessage}
-        </Alert>
-      </Snackbar>
 
       <Row style={{ margin: "0" }}>
         <Col xl={6} style={{ padding: "0" }}>

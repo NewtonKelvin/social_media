@@ -1,5 +1,5 @@
 import { Html, Head, Main, NextScript } from 'next/document'
-const env = process.env.NODE_ENV || 'development'; //production
+const env = process.env.ENVIRONMENT || 'development'; //production
 
 export default function Document() {
   return (
@@ -53,7 +53,7 @@ export default function Document() {
           crossOrigin="anonymous"
         />
         {/* ICON */}
-        <link rel="shortcut icon" href="/images/logotipo_blue.svg" />
+        <link rel="shortcut icon" href="/images/logotipo.svg" />
       </Head>
       <body>
         <Main />

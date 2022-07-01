@@ -1,5 +1,4 @@
 import { createGlobalStyle } from 'styled-components'
-import Image from 'next/image'
 
 import backgroundLight from '../../public/images/background_light.jpg'
 import backgroundDark from '../../public/images/background_dark.jpg'
@@ -102,14 +101,42 @@ const GlobalStyle = createGlobalStyle`
   /* CUSTOM */
 
   hr {
-    border: 1px solid var(--text);
+    border: 4px solid var(--opacity);
+    border-radius: 10px;
     transition: border var(--transition);
+    width: 25%;
+    margin: 30px 20px;
+  }
+
+  textarea {
+    font-weight: 500;
+    width: 100%;
+    color: var(--text);
+    background-color: var(--input);
+    margin: 10px;
+    resize: none;
+    padding: 10px !important;
+
+    border-bottom: 1px solid transparent;
+    transition: all var(--transition);
+  }
+  
+  label {
+    margin: 5px 10px;
+    font-weight: bold;
+    color: var(--text);
+    display: block;
+    font-size: 1rem;
   }
 
   input, textarea, button {
     background-color: var(--input);
     border-radius: 10px;
     padding: 7px;
+    &:disabled {
+      color: var(--opacity);
+      cursor: not-allowed;
+    }
   }
 
   a {
@@ -140,6 +167,26 @@ const GlobalStyle = createGlobalStyle`
       transform: scaleX(1);
       color: var(--primary);
     }
+  }
+
+  /* width */
+  ::-webkit-scrollbar {
+    width: 15px;
+  }
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: transparent; 
+  }  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: var(--opacity);
+    border-radius: 8px;
+    border: 5px solid var(--container);
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
   }
 `;
  

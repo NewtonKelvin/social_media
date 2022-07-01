@@ -1,7 +1,7 @@
 import styled from "styled-components"
 import Image from "next/image"
 //Images
-import Logotipo from "../../public/images/logotipo_blue.svg"
+import Logotipo from "../../public/images/logotipo.svg"
 
 const CustomBrand = styled.div`
   /* height: 120px; */
@@ -32,7 +32,7 @@ const CustomBrand = styled.div`
   }
 `;
 
-export default function StyledBrand({ /* */ }) {
+export default function StyledBrand() {
   return (
     <CustomBrand>
       <Image className="Logo" src={Logotipo} layout="responsive" height={120} priority={true} />

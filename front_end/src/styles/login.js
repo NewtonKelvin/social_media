@@ -3,7 +3,7 @@ import styled from "styled-components"
 export const StyledContainerL = styled.div`
   background-color: var(--container) !important;
   border-radius: 10px !important;
-  height: calc(100vh - 10px);
+  height: calc(100vh - (var(--page-padding)*2));
   padding: 5px;
 
   transition: all var(--transition);
@@ -33,7 +33,7 @@ export const StyledContainerL = styled.div`
 export const StyledContainerR = styled.div`
   background-color: transparent !important;
   border-radius: 10px !important;
-  height: calc(100vh - 10px);
+  height: calc(100vh - (var(--page-padding)*2));
   padding: 5px;
   color: var(--text);
 

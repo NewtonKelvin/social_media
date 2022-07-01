@@ -2,13 +2,6 @@ import styled from "styled-components"
 import GlobalStyle, { Theme }  from '../styles/globals'
 
 const CustomInput = styled.div`
-  label {
-    margin: 5px 10px;
-    font-weight: bold;
-    color: var(--opacity);
-    display: block;
-    font-size: 0.8rem;
-  }
 
   svg {
     color: var(--opacity);

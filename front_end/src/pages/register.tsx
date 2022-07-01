@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useRouter } from "next/router"
 import { useForm, SubmitHandler } from "react-hook-form"
 //Context
-import { ThemeContext } from "./_app"
+import { ThemeContext, AlertContext } from "./_app"
 //API
 import { api } from '../services/api'
 //Packages
@@ -26,6 +26,7 @@ import { AccountCircle, Fingerprint, Tag, Mail, Brightness3, WbSunny } from "@mu
 export default function Register() {
 
   const { theme, toggleTheme, isDark } = useContext(ThemeContext)
+  const { handleAlertOpen, handleAlertMessage, handleAlertSeverity } = useContext(AlertContext)
   
   const router = useRouter()
 
@@ -36,9 +37,6 @@ export default function Register() {
   }
 
   const [errors, setErrors] = useState('')
-  const [alertOpen, setAlertOpen] = useState(false)
-  const [alertMessage, setAlertMessage] = useState('')
-  const [alertSeverity, setAlertSeverity] = useState<Color>('error')
 
   const { register, handleSubmit, reset } = useForm<FormValues>()
 
@@ -47,10 +45,10 @@ export default function Register() {
     const response:any = await api.post('/register', data)
     .then((response) => {
       
-      setAlertSeverity('success')
-      setAlertMessage(response.data.message)
+      handleAlertSeverity('success')
+      handleAlertMessage(response.data.message)
       setErrors('')
-      setAlertOpen(true)
+      handleAlertOpen(true)
 
       reset()
       setTimeout(() => {
@@ -59,34 +57,20 @@ export default function Register() {
       
     }).catch(({response}) => {
 
-      setAlertSeverity('error')
-      setAlertMessage(response.data.message)
+      handleAlertSeverity('error')
+      handleAlertMessage(response.data.message)
       setErrors(response.data.field)
-      setAlertOpen(true)
+      handleAlertOpen(true)
 
     })
 
   }
+  
   return (
     <>
       <Head>
         <title>SOCIAL_MEDIA | REGISTER</title>
       </Head>
-
-      <Snackbar
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        open={alertOpen}
-        autoHideDuration={6000}
-        onClose={() => setAlertOpen(false)}
-        TransitionComponent={Slide}
-      >
-        <Alert
-          onClose={() => setAlertOpen(false)}
-          severity={alertSeverity}
-        >
-          {alertMessage}
-        </Alert>
-      </Snackbar>
 
       <Row style={{ margin: "0" }}>
         <Col xl={6} style={{ padding: "0" }}>

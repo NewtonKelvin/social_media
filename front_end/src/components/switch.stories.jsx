@@ -22,5 +22,5 @@ Default.args = {
   iconLeft: "Light",
   iconRight: "Dark",
   checked: false,
-  onChange: () => !checked
+  onChange: () => null
 };

@@ -7,8 +7,9 @@ import { useForm } from "react-hook-form"
 import { ThemeContext } from "../pages/_app"
 import Navbar from "./navbar"
 import Sidebar from "./sidebar"
-
-
+//API
+import { api } from "../services/api"
+import { parseCookies } from "nookies"
 
 const MyLayout = styled.div`
 
@@ -58,51 +59,53 @@ const MyLayout = styled.div`
   .Sidebar {
     grid-area: Sidebar;
     height: calc(100vh - var(--navbar-height) - (var(--page-padding)*3));
+    overflow-y: auto;
+    overflow-x: hidden;
   }
   .Content {
     grid-area: Content;
     height: calc(100vh - var(--navbar-height) - (var(--page-padding)*3));
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 `
 
 interface LayoutType {
   children: JSX.Element | JSX.Element[],
-  title: string
+  title: string,
+  pageName: "Home" | "Profile" | "Messages" | "Bookmarks" | "Explore" | "Configurations" | "None"
 }
 
-interface LayoutContext {
+export const LayoutContext = createContext({})
 
-}
-
-export const LayoutContext = createContext({} as LayoutContext)
-
-export default function Layout({ children, title }:LayoutType){
+export default function Layout({ children, title, pageName }:LayoutType){
 
   const [sideOpen, setSideOpen] = useState(false)
+  const [currentPage, setCurrentPage] = useState(pageName)
 
   return (
-    <>
-      <MyLayout>
+    <MyLayout>
 
-        <Head>
-          <title>SOCIAL_MEDIA | {title}</title>
-        </Head>
-        
-        <LayoutContext.Provider value={{ sideOpen, setSideOpen }}>
+      <Head>
+        <title>SOCIAL_MEDIA | {title}</title>
+      </Head>
+      
+      <LayoutContext.Provider value={{ sideOpen, setSideOpen, currentPage, setCurrentPage }}>
 
-          <div className="Navbar">
-            <Navbar />
-          </div>
+        <div className="Navbar">
+          <Navbar />
+        </div>
 
-          <div className="Sidebar" aria-expanded={sideOpen}>
-            <Sidebar />
-          </div>
+        <div className="Sidebar" aria-expanded={sideOpen}>
+          <Sidebar />
+        </div>
 
-          <div className="Content">{children}</div>
+        <div className="Content">
+          {children}
+        </div>
 
-        </LayoutContext.Provider>
+      </LayoutContext.Provider>
 
-      </MyLayout>
-    </>
+    </MyLayout>
   );
 }

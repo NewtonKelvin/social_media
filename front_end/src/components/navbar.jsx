@@ -4,16 +4,17 @@ import Image from "next/image"
 import { useContext } from "react"
 import { useForm } from "react-hook-form"
 //Images
-import Logotipo from "../../public/images/logotipo_blue.svg"
+import Logotipo from "../../public/images/logotipo.svg"
 //Components
 import StyledBrand from "./brand"
 import StyledInput from "../components/input"
 import { Dropdown } from "react-bootstrap"
 //Icons
-import { Search, Logout, Brightness3, WbSunny, Menu } from "@mui/icons-material"
+import { Search, Logout, Brightness3, WbSunny, Menu, Close } from "@mui/icons-material"
 //Context
 import { LayoutContext } from "./../components/layout"
 import { ThemeContext } from "./../pages/_app"
+import { AuthContext } from "../context/AuthContext"
 
 const CustomBrand = styled.div`
   /* height: 120px; */
@@ -102,7 +103,7 @@ const CustomNavbar = styled.div`
     svg {
       margin: 0 10px;
       transition: color var(--transition);
-      color: var(--white);
+      color: var(--text);
       &:hover {
         color: var(--primary);
       }
@@ -124,6 +125,7 @@ export default function Navbar(){
 
   const { theme, toggleTheme, isDark } = useContext(ThemeContext)
   const { sideOpen, setSideOpen } = useContext(LayoutContext)
+  const { signOut } = useContext(AuthContext)
 
   const { register, handleSubmit, reset } = useForm()
 
@@ -164,8 +166,12 @@ export default function Navbar(){
         ) : (
           <WbSunny onClick={toggleTheme} />
         )}
-        <Logout />
-        <Menu className="Toggle" onClick={() => setSideOpen(!sideOpen)} />
+        <Logout onClick={() => signOut()} />
+        {
+          (sideOpen === true)
+          ? <Close className="Toggle" onClick={() => setSideOpen(!sideOpen)} />
+          : <Menu className="Toggle" onClick={() => setSideOpen(!sideOpen)} />
+        }
       </div>
     </CustomNavbar>
   )
