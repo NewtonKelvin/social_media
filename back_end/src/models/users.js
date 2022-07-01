@@ -35,11 +35,13 @@ const Users = db.sequelize.define('users', {
   },
   avatar: {
     type: db.Sequelize.STRING,
-    allowNull: true
+    allowNull: true,
+    default: 'avatar/default.jpg'
   },
   cover: {
     type: db.Sequelize.STRING,
-    allowNull: true
+    allowNull: true,
+    default: 'cover/default.jpg'
   },
   email: {
     type: db.Sequelize.STRING,

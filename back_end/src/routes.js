@@ -1,20 +1,42 @@
 const express = require('express')
 const routes = express.Router()
 
+//Multer
+const multer = require("multer")
+const multerConfig = require("./config/multer")
+const upload = multer(multerConfig)
+
 //JWT AUTH
 require("dotenv-safe").config();
 const jwt = require('jsonwebtoken');
 
 //Controllers
 const loginController = require('./controller/login')
+const profileController = require('./controller/profile')
+const imageController = require('./controller/image')
 
-//Account
+//Login
 routes.post('/register', loginController.register)
 routes.post('/newPassword', loginController.newPassword)
 routes.get('/login', loginController.login)
 routes.get('/logout', verifyJWT, loginController.logout)
 routes.get('/forgotPassword', loginController.forgotPassword)
-routes.get('/userByToken', loginController.userByToken)
+routes.get('/userByToken', verifyJWT, loginController.userByToken)
+
+routes.get('/image/:folder/:key', imageController.get)
+
+//Profile
+routes.post(
+  '/profile/update',
+  verifyJWT,
+  profileController.update
+)
+
+routes.post('/profile/updateCover', verifyJWT, upload.single("cover"), imageController.cover)
+routes.post('/profile/updateAvatar', verifyJWT, upload.single("avatar"), imageController.avatar)
+
+
+//Profile
 
 //Middlewares
 function verifyJWT(req, res, next) {
@@ -36,7 +58,7 @@ function verifyJWT(req, res, next) {
     }
 
     // se tudo estiver ok, salva no request para uso posterior
-    req.uID = decoded.id;
+    req.uID = decoded.uID
     next();
   });
 
