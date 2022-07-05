@@ -1,18 +1,21 @@
 //Next React
-import { useContext } from "react"
+import { Col, Row } from "react-bootstrap"
 //Components
 import Layout from "../../components/layout"
 //Context
-import { AuthContext } from "../../context/AuthContext"
 import { getAPIClient } from "../../services/axios"
 
 export default function Feed({ usuario }) {
 
   return (
     <>
-      <Layout title="FEED" pageName="Home">
-        <h1>Olá {usuario.name}</h1>
-        <p>Seja bem-vindo!</p>
+      <Layout title="Home">
+        <Row>
+          <Col>
+            <h1>Olá {usuario.name}</h1>
+            <p>Seja bem-vindo!</p>
+          </Col>
+        </Row>
       </Layout>
     </>
   )
@@ -25,8 +28,8 @@ export const getServerSideProps = async (ctx) => {
   // Fetch data from external API
   const response = await apiClient.get('/userByToken')
 
-  const responseAvatar = apiClient.get(`/image/${response.data.user.avatar}`)
-  const responseCover = apiClient.get(`/image/${response.data.user.cover}`)
+  apiClient.get(`/image/${response.data.user.avatar}`)
+  apiClient.get(`/image/${response.data.user.cover}`)
 
   const usuario = response.data.user
 

@@ -1,15 +1,12 @@
 //React Next StyledComponents
 import styled from "styled-components"
 import Head from "next/head"
-import { createContext, useContext, useState } from "react"
-import { useForm } from "react-hook-form"
+import { createContext, useState } from "react"
 //Context
-import { ThemeContext } from "../pages/_app"
 import Navbar from "./navbar"
 import Sidebar from "./sidebar"
-//API
-import { api } from "../services/api"
-import { parseCookies } from "nookies"
+//React bootstrap
+import { Col, Container, Row } from "react-bootstrap"
 
 const MyLayout = styled.div`
 
@@ -42,7 +39,7 @@ const MyLayout = styled.div`
 
   width: calc(100vw - (var(--page-padding)*2));
 
-  div {
+  &>div {
     padding: var(--page-padding);
     background-color: var(--container);
     border-radius: 10px;
@@ -68,26 +65,52 @@ const MyLayout = styled.div`
     overflow-y: auto;
     overflow-x: hidden;
   }
+
+  div.Title {
+    padding-left: 20px;
+    font-weight: bold;
+    font-size: 2.4rem;
+    text-transform: uppercase;
+  }
+  div.Description {
+    font-weight: normal;
+    font-size: 1.2rem;
+    padding-left: 20px;
+    border-left: 3px solid var(--primary);
+  }
+  div.PageInfo {
+    margin-bottom: 30px;
+  }
 `
 
 interface LayoutType {
+  /** Conteúdo da página com elemenos JSX */
   children: JSX.Element | JSX.Element[],
-  title: string,
-  pageName: "Home" | "Profile" | "Messages" | "Bookmarks" | "Explore" | "Configurations" | "None"
+  /** Nome do item no menu lateral, também vai como título de cabeçalho/página */
+  title: "Home" | "Profile" | "Messages" | "Bookmarks" | "Explore" | "Edit profile" | "None",
+  /** Descrição que vai na descrição da página */
+  description?: string,
+  /** Breadcrumbs: Deve vir Link dentro de StyledBreadcrumbs */
+  breadcrumbs: JSX.Element | JSX.Element[],
 }
 
 export const LayoutContext = createContext({})
 
-export default function Layout({ children, title, pageName }:LayoutType){
+export default function Layout({
+  children,
+  title,
+  description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras volutpat sagittis odio.",
+  breadcrumbs
+}:LayoutType){
 
   const [sideOpen, setSideOpen] = useState(false)
-  const [currentPage, setCurrentPage] = useState(pageName)
+  const [currentPage, setCurrentPage] = useState(title)
 
   return (
     <MyLayout>
 
       <Head>
-        <title>SOCIAL_MEDIA | {title}</title>
+        <title>SOCIAL_MEDIA | {title.toUpperCase()}</title>
       </Head>
       
       <LayoutContext.Provider value={{ sideOpen, setSideOpen, currentPage, setCurrentPage }}>
@@ -101,7 +124,22 @@ export default function Layout({ children, title, pageName }:LayoutType){
         </div>
 
         <div className="Content">
-          {children}
+
+          <Container>
+            <Row className="Breadcrumbs">
+              <Col>
+                {breadcrumbs}
+              </Col>
+            </Row>
+            <Row className="PageInfo">
+              <Col md={6}>
+                <div className="Title">{title}</div>
+                <div className="Description">{description}</div>
+              </Col>
+            </Row>
+            {children}
+          </Container>
+          {/* <hr /> */}
         </div>
 
       </LayoutContext.Provider>

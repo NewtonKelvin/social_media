@@ -18,12 +18,12 @@ import { getAPIClient } from "../services/axios"
 
 const CustomSidebar = styled.div`
   .Profile {
+    margin: 5px 0px 15px 0px;
     display: grid;
     grid-template-areas: "Photo Name"
     "Photo Username";
     grid-template-columns: 60px 1fr;
     align-items: center;
-    line-height: .6;
     .Photo {
       grid-area: Photo;
       padding: 0;
@@ -38,22 +38,36 @@ const CustomSidebar = styled.div`
       }
     }
     .Name {
+      margin: 0 10px;
       grid-area: Name;
       font-size: 1.2rem;
       font-weight: bold;
       color: var(--text);
+
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      transition: color var(--transition);
     }
     .Username {
+      margin: 0 10px;
       grid-area: Username;
       font-size: 1rem;
       font-weight: bold;
       color: var(--opacity);
+
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
     }
   }
   .Numbers {
     background-color: var(--primary);
     display: flex;
     flex-direction: row;
+    border-radius: 10px;
+    padding: 5px;
+    margin: 10px 0;
     div {
       padding: 0;
       width: 100%;
@@ -117,9 +131,9 @@ export default function Sidebar() {
       Icon: <Explore />,
       Link: "/explore"
     },{
-      Title: "Configurations",
+      Title: "Edit profile",
       Icon: <Settings />,
-      Link: "/configurations"
+      Link: "/config/editProfile"
     },
   ]
 
@@ -132,6 +146,7 @@ export default function Sidebar() {
             layout="responsive"
             height={60}
             width={60}
+            className="WithBackground"
           />
         </div>
         <div className="Name">

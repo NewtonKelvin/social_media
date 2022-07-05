@@ -101,11 +101,11 @@ const GlobalStyle = createGlobalStyle`
   /* CUSTOM */
 
   hr {
-    border: 4px solid var(--opacity);
+    border: 2px solid var(--text);
     border-radius: 10px;
     transition: border var(--transition);
     width: 25%;
-    margin: 30px 20px;
+    /* margin: 30px 0; */
   }
 
   textarea {
@@ -123,10 +123,11 @@ const GlobalStyle = createGlobalStyle`
   
   label {
     margin: 5px 10px;
-    font-weight: bold;
+    font-weight: 500;
     color: var(--text);
     display: block;
     font-size: 1rem;
+    transition: color var(--transition);
   }
 
   input, textarea, button {
@@ -136,6 +137,22 @@ const GlobalStyle = createGlobalStyle`
     &:disabled {
       color: var(--opacity);
       cursor: not-allowed;
+    }
+  }
+
+  img.WithBackground {
+    animation-name: backgroundColorPalette;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-timing-function: linear; 
+  }
+  @keyframes backgroundColorPalette {
+    0% {
+      background: var(--primary);
+    }
+    100% {
+      background: var(--secondary);
     }
   }
 
@@ -169,22 +186,17 @@ const GlobalStyle = createGlobalStyle`
     }
   }
 
-  /* width */
   ::-webkit-scrollbar {
     width: 15px;
   }
-  /* Track */
   ::-webkit-scrollbar-track {
     background: transparent; 
-  }  
-  /* Handle */
+  } 
   ::-webkit-scrollbar-thumb {
     background: var(--opacity);
     border-radius: 8px;
     border: 5px solid var(--container);
   }
-
-  /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
     background: var(--primary);
   }

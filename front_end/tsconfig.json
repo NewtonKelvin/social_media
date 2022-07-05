@@ -35,7 +35,7 @@
     "src/components/switch.stories.jsx",
     "src/components/switch.jsx",
     "src/context/AuthContext.jsx",
-    "src/pages/system/configurations.jsx"
+    "src/pages/system/editProfile.jsx"
   ],
   "exclude": [
     "node_modules",

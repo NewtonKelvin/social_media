@@ -2,7 +2,7 @@ import styled from "styled-components"
 import { Theme }  from '../styles/globals'
 
 const CustomButton = styled.div`
-  margin: 5px;
+  margin: 10px 0;
   button {
     display: flex;
     align-items: center;
