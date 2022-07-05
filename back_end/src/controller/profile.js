@@ -48,17 +48,14 @@ module.exports = {
   async update(req, res) {
 
     //Dados
-    return res.status(200).json(req.body)
-
-    const { name, username, email, bio } = req.query;
+    const { name, username, email, bio } = req.body;
     const { uID } = req;
 
     //Checagem de dados
     if (!uID || uID == null || typeof uID === undefined) {
       return res.status(400).json({
         error: true,
-        message: "ID não pode ser vazio",
-        field: "id",
+        message: "ID não pode ser vazio"
       });
     }
     if (!name || name == null || typeof name === undefined) {
@@ -73,6 +70,13 @@ module.exports = {
         error: true,
         message: "Username não pode ser vazio",
         field: "username",
+      });
+    }
+    if (!email || email === null || typeof email === undefined) {
+      return res.status(400).json({
+        error: true,
+        message: "Email não pode ser vazio",
+        field: "email",
       });
     }
 
@@ -99,30 +103,24 @@ module.exports = {
           });
         }
       } else {
-        //New password
-        Users.update(
-          {
-            bio,
-            name,
-            username,
-            email,
-          },
-          {
-            where: { id: uID },
-          }
-        )
-          .then((user) => {
-            return res.status(200).send({
-              error: false,
-              message: "Dados atualizados com sucesso!",
-            });
-          })
-          .catch((error) => {
-            return res.status(500).json({
-              error: true,
-              message: "Erro ao atualizar dados: " + error,
-            });
+        Users.update({
+          bio,
+          name,
+          username,
+          email,
+        }, {
+          where: { id: uID }
+        }).then((user) => {
+          return res.status(200).send({
+            error: false,
+            message: "Dados atualizados com sucesso!"
           });
+        }).catch((error) => {
+          return res.status(500).json({
+            error: true,
+            message: "Erro ao atualizar dados: " + error,
+          });
+        });
       }
     }).catch((error) => {
       return res.status(500).json({

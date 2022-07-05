@@ -26,11 +26,7 @@ routes.get('/userByToken', verifyJWT, loginController.userByToken)
 routes.get('/image/:folder/:key', imageController.get)
 
 //Profile
-routes.post(
-  '/profile/update',
-  verifyJWT,
-  profileController.update
-)
+routes.post('/profile/update', verifyJWT, profileController.update)
 
 routes.post('/profile/updateCover', verifyJWT, upload.single("cover"), imageController.cover)
 routes.post('/profile/updateAvatar', verifyJWT, upload.single("avatar"), imageController.avatar)

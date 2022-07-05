@@ -25,7 +25,7 @@ const s3 = new S3({
 
 module.exports = {
 
-  async cover(req, res, next){
+  async cover(req, res){
 
     const { uID } = req;
   
@@ -43,17 +43,17 @@ module.exports = {
 
       //DELETE LOCAL FILE
       const oldImage = `tmp/${req.file.filename}`
-      unlinkFile(oldImage)
+      await unlinkFile(oldImage)
 
       //Apaga a imgem antiga na pasta TMP e no S3
       Users.findByPk(uID)
-      .then((usuario) => {
+      .then(async (usuario) => {
 
         if(usuario.cover != "cover/default.jpg"){
           //DELETE S3 FILE
-          s3.deleteObject({Bucket: bucketName, Key: `cover/${usuario.cover.slice(-20)}`}, function(err, data) {
+          await s3.deleteObject({Bucket: bucketName, Key: `cover/${usuario.cover.slice(-20)}`}, function(err, data) {
             if(err){
-              res.status(400).json({
+              return res.status(400).json({
                 error: true,
                 message: "Falha ao apagar imagem do S3: "+ err.stack
               })
@@ -64,7 +64,7 @@ module.exports = {
         }
 
       }).catch(err => {
-        res.status(400).json({
+        return res.status(400).json({
           error: true,
           message: "Falha ao encontrar imagem antiga de capa: "+err
         })
@@ -77,14 +77,14 @@ module.exports = {
           id: req.uID
         }
       }).then(profile => {
-        res.status(200).json({
+        return res.status(200).json({
           error: false,
           filename: uploadParams.Key,
           message: "Image de capa atualizada com sucesso!"
         })
   
       }).catch(err => {
-        res.status(400).json({
+        return res.status(400).json({
           error: true,
           message: "Falha ao atualizar imagem de capa: " + err
         })
@@ -92,7 +92,7 @@ module.exports = {
 
     } else {
 
-      res.status(400).json({
+      return res.status(400).json({
         error: true,
         message: "Imagem de capa não pode ser vazia!"
       })
@@ -101,7 +101,7 @@ module.exports = {
 
   },
 
-  async avatar(req, res, next){
+  async avatar(req, res){
 
     const { uID } = req;
   
@@ -120,28 +120,26 @@ module.exports = {
 
       //DELETE LOCAL FILE
       const oldImage = `tmp/${req.file.filename}`
-      unlinkFile(oldImage)
+      await unlinkFile(oldImage)
 
-      //Apaga a imgem antiga na pasta TMP e no S3
+      //DELETE S3 FILE
       Users.findByPk(uID)
-      .then((usuario) => {
+      .then(async (usuario) => {
 
         if(usuario.avatar != "avatar/default.jpg"){
           //DELETE S3 FILE
-          s3.deleteObject({Bucket: bucketName, Key: `avatar/${usuario.avatar.slice(-20)}`}, function(err, data) {
+          await s3.deleteObject({Bucket: bucketName, Key: `avatar/${usuario.avatar.slice(-20)}`}, function(err, data) {
             if(err){
-              res.status(400).json({
+              return res.status(400).json({
                 error: true,
                 message: "Falha ao apagar imagem do S3: "+ err.stack
               })
-            } else {
-              
             }
           });
         }
 
       }).catch(err => {
-        res.status(400).json({
+        return res.status(400).json({
           error: true,
           message: "Falha ao encontrar imagem antiga de avatar: "+err
         })
@@ -154,14 +152,14 @@ module.exports = {
           id: uID
         }
       }).then(profile => {
-        res.status(200).json({
+        return res.status(200).json({
           error: false,
           filename: uploadParams.Key,
           message: "Image de perfil atualizada com sucesso!"
         })
   
       }).catch(error => {
-        res.status(400).json({
+        return res.status(400).json({
           error: true,
           message: "Falha ao atualizar imagem de perfil"
         })
@@ -170,7 +168,7 @@ module.exports = {
       
     } else {
 
-      res.status(400).json({
+      return res.status(400).json({
         error: true,
         message: "Imagem de perfil não pode ser vazia!"
       })
@@ -189,7 +187,7 @@ module.exports = {
     }
 
     const file = await s3.getObject(downloadParams).createReadStream()
-    file.pipe(res)
+    return file.pipe(res)
 
   }
 
