@@ -1,13 +1,54 @@
 import styled from "styled-components"
-import GlobalStyle, { Theme }  from '../styles/globals'
 
 const CustomInput = styled.div`
 
-  svg {
+  img {
+    max-width: 40px !important;
+    max-height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+
+    margin: auto 0 !important;
+    padding: 5px !important;
+    border-radius: 10px !important;
+    background-color: transparent !important;
+    margin: 0 16px !important;
+  }
+
+  svg, img {
     color: var(--opacity);
     height: 2.5rem;
     position: absolute;
     margin: 0 .5rem;
+  }
+
+  button {
+    background-color: var(--primary);
+    height: 1.8rem;
+    width: 1.8rem;
+    position: absolute;
+
+    margin: 5px -2.2rem;
+    padding: 5px;
+    border-radius: 7px;
+
+    svg {
+      top: 0;
+      left: 0;
+      color: var(--white);
+      height: 1.8rem;
+      width: 1.8rem;
+      padding: 5px;
+      margin: 0;
+    }
+
+    /*color: var(--opacity);
+    height: calc(2.5rem - 10px);
+    width: calc(2.5rem - 10px);
+    position: absolute;
+    margin: 5px 30px 5px 5px;
+    padding: 0px;
+    background-color: var(--primary);*/
   }
 
   input {
@@ -20,7 +61,7 @@ const CustomInput = styled.div`
     border-bottom: 1px solid transparent;
     transition: all var(--transition);
 
-    padding-left: ${props => (props.noIcon) ? ".8rem" : "2.5rem"};
+    padding-left: ${props => (!props.withIcon) ? ".8rem" : "2.5rem"};
   }
 
   input:-webkit-autofill,
@@ -63,9 +104,9 @@ const CustomInput = styled.div`
   }
 `;
 
-export default function StyledInput({ children, noIcon = false }) {
+export default function StyledInput({ children, withIcon = true }) {
   return (
-    <CustomInput noIcon={noIcon}>
+    <CustomInput withIcon={withIcon}>
       {children}
     </CustomInput>
   );

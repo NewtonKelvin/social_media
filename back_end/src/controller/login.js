@@ -17,8 +17,6 @@ const { Op } = require("sequelize");
 //Nodemailer
 const nodemailer = require("nodemailer");
 
-let SessionTimeout = 60 * 60 * 1; // 1 Hour
-
 module.exports = {
   //STATUS 200 - SUCCESS (SUCESSO)
   //STATUS 400 - VALIDATION ERROR (FALTAM DADOS)
@@ -63,84 +61,84 @@ module.exports = {
         [Op.or]: [{ username }, { email }],
       },
     })
-      .then((user) => {
-        if (user) {
-          if (user.email === email) {
-            return res.status(401).json({
-              error: true,
-              message: "Já existe um usuário com este email",
-              field: "email",
-            });
-          }
-
-          if (user.username === username) {
-            return res.status(401).json({
-              error: true,
-              message: "Já existe um usuário com este username",
-              field: "username",
-            });
-          }
-        } else {
-          //New password
-          Users.create({
-            username,
-            name,
-            password: null,
-            email,
-          })
-            .then((user) => {
-              if (user) {
-                const token = crypto.randomBytes(20).toString("hex");
-                const now = new Date();
-                now.setHours(now.getHours() + 1);
-
-                user.update({
-                  passwordResetToken: token,
-                  passwordResetTokenExpire: now,
-                });
-
-                let transporter = nodemailer.createTransport(mailer);
-
-                let info = transporter.sendMail({
-                  from: `"SOCIAL MEDIA" <noreply@socialmedia.com>`, // sender address
-                  to: user.email, // list of receivers
-                  subject: "Confirm your account | SOCIAL MEDIA", // Subject line
-                  // text: "Hello world?", // plain text body
-                  html: `
-                <b>WELCOME TO SOCIAL MEDIA!!!</b>
-                <br/>
-                <p>Link to confirm your account: </p>
-                <a href='${
-                  config.url + "/newPassword/" + token
-                }'>Click here</a>`, // html body
-                });
-
-                return res.status(200).send({
-                  error: false,
-                  message:
-                    "Usuário criado com sucesso. Um link de confirmação foi enviado no seu email!",
-                });
-              } else {
-                return res.status(500).json({
-                  error: true,
-                  message: "Falha ao cadastrar usuário: ",
-                });
-              }
-            })
-            .catch((error) => {
-              return res.status(500).json({
-                error: true,
-                message: "Erro ao cadastrar usuário: " + error,
-              });
-            });
+    .then((user) => {
+      if (user) {
+        if (user.email === email) {
+          return res.status(401).json({
+            error: true,
+            message: "Já existe um usuário com este email",
+            field: "email",
+          });
         }
-      })
-      .catch((error) => {
-        return res.status(500).json({
-          error: true,
-          message: "Erro ao checar usuário: " + error,
+
+        if (user.username === username) {
+          return res.status(401).json({
+            error: true,
+            message: "Já existe um usuário com este username",
+            field: "username",
+          });
+        }
+      } else {
+        //New password
+        Users.create({
+          username,
+          name,
+          password: null,
+          email,
+        })
+        .then((user) => {
+          if (user) {
+            const token = crypto.randomBytes(20).toString("hex");
+            const now = new Date();
+            now.setHours(now.getHours() + 1);
+
+            user.update({
+              passwordResetToken: token,
+              passwordResetTokenExpire: now,
+            });
+
+            let transporter = nodemailer.createTransport(mailer);
+
+            let info = transporter.sendMail({
+              from: `"SOCIAL MEDIA" <noreply@socialmedia.com>`, // sender address
+              to: user.email, // list of receivers
+              subject: "Confirm your account | SOCIAL MEDIA", // Subject line
+              // text: "Hello world?", // plain text body
+              html: `
+            <b>WELCOME TO SOCIAL MEDIA!!!</b>
+            <br/>
+            <p>Link to confirm your account: </p>
+            <a href='${
+              config.url + "/newPassword/" + token
+            }'>Click here</a>`, // html body
+            });
+
+            return res.status(200).send({
+              error: false,
+              message:
+                "Usuário criado com sucesso. Um link de confirmação foi enviado no seu email!",
+            });
+          } else {
+            return res.status(500).json({
+              error: true,
+              message: "Falha ao cadastrar usuário: ",
+            });
+          }
+        })
+        .catch((error) => {
+          return res.status(500).json({
+            error: true,
+            message: "Erro ao cadastrar usuário: " + error,
+          });
         });
+      }
+    })
+    .catch((error) => {
+      return res.status(500).json({
+        error: true,
+        message: "Erro ao checar usuário: " + error,
       });
+    });
   },
 
   async newPassword(req, res) {
@@ -212,7 +210,7 @@ module.exports = {
             });
           }
         } else {
-          return res.status(422).send({
+          return res.status(401).send({
             error: true,
             message: "Link inválido",
           });
@@ -411,6 +409,7 @@ module.exports = {
         // Do something with the user
         if (user) {
           return res.status(200).send({
+            auth: true,
             error: false,
             user: {
               id: user.id,

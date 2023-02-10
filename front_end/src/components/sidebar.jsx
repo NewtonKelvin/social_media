@@ -1,19 +1,15 @@
 import { useContext } from "react"
-import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/router"
 import styled from "styled-components"
 //Icones
 import { AccountCircle, Home, Chat, Bookmarks, Explore, Settings } from "@mui/icons-material"
-//Images
-// import ProfilePicture from "../../public/images/avatar.jpg"
 //Components
 import StyledButton from "./button"
 //Context
 import { LayoutContext } from "./layout"
-import { AuthContext } from "../context/AuthContext"
-//API
-import { getAPIClient } from "../services/axios"
+import { useAuth } from "../context/AuthContext"
+import { Skeleton } from "@mui/material"
 
 
 const CustomSidebar = styled.div`
@@ -101,8 +97,8 @@ export default function Sidebar() {
 
   const router = useRouter()
   
-  const { currentPage, setCurrentPage } = useContext(LayoutContext)
-  const { user } = useContext(AuthContext)
+  const { currentPage } = useContext(LayoutContext)
+  const { user } = useAuth()
 
   const ProfilePicture = `${process.env.BACK_END}/image/${user?.avatar}`
 
@@ -150,10 +146,10 @@ export default function Sidebar() {
           />
         </div>
         <div className="Name">
-          {user?.name}
+          {(user) ? user?.name : <Skeleton variant="text" />}
         </div>
         <div className="Username">
-          @{user?.username}
+          {(user) ? `@${user?.username}` : <Skeleton variant="text" />}
         </div>
       </div>
       <div className="Numbers">
@@ -175,7 +171,7 @@ export default function Sidebar() {
         {
           Menu.map((item, key) => {
             return (
-              <StyledButton key={key} transparent={(item.Title === currentPage) ? false : true} alignLeft>
+              <StyledButton key={key} className={(item.Title === currentPage) ? "primary" : "transparent"} alignLeft>
                 <button type="button" onClick={() => router.push(item.Link)}>
                   {item.Icon}
                   {item.Title}

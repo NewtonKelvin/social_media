@@ -1,5 +1,5 @@
 import { Html, Head, Main, NextScript } from 'next/document'
-const env = process.env.ENVIRONMENT || 'development'; //production
+const env = process.env.NODE_ENV; //production
 
 export default function Document() {
   return (

@@ -1,7 +1,7 @@
 //React Next StyledComponents
 import styled from "styled-components"
 import Head from "next/head"
-import { createContext, useState } from "react"
+import { createContext, useRef, useState } from "react"
 //Context
 import Navbar from "./navbar"
 import Sidebar from "./sidebar"
@@ -64,10 +64,21 @@ const MyLayout = styled.div`
     height: calc(100vh - var(--navbar-height) - (var(--page-padding)*3));
     overflow-y: auto;
     overflow-x: hidden;
+    @media (max-width: 900px){
+      div.container {
+        padding: 0;
+      }
+    }
   }
+`
 
+export const PageInfo = styled(Row)`
+  margin: 20px 0px;
+  div.PageInfo {
+    margin-bottom: 30px;
+  }
   div.Title {
-    padding-left: 20px;
+    padding-left: 23px;
     font-weight: bold;
     font-size: 2.4rem;
     text-transform: uppercase;
@@ -77,9 +88,6 @@ const MyLayout = styled.div`
     font-size: 1.2rem;
     padding-left: 20px;
     border-left: 3px solid var(--primary);
-  }
-  div.PageInfo {
-    margin-bottom: 30px;
   }
 `
 
@@ -103,8 +111,18 @@ export default function Layout({
   breadcrumbs
 }:LayoutType){
 
+  const bottomRef = useRef(null)
+  const topRef = useRef(null)
+
   const [sideOpen, setSideOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(title)
+
+  const scrollToBottom = () => {
+    bottomRef.current?.scrollIntoView({behavior: 'smooth'});
+  }
+  const scrollToTop = () => {
+    topRef.current?.scrollIntoView({behavior: 'smooth'});
+  }
 
   return (
     <MyLayout>
@@ -113,7 +131,14 @@ export default function Layout({
         <title>SOCIAL_MEDIA | {title.toUpperCase()}</title>
       </Head>
       
-      <LayoutContext.Provider value={{ sideOpen, setSideOpen, currentPage, setCurrentPage }}>
+      <LayoutContext.Provider value={{
+        sideOpen,
+        setSideOpen,
+        currentPage,
+        setCurrentPage,
+        scrollToBottom,
+        scrollToTop
+      }}>
 
         <div className="Navbar">
           <Navbar />
@@ -124,21 +149,22 @@ export default function Layout({
         </div>
 
         <div className="Content">
-
+          <div ref={topRef} />
           <Container>
             <Row className="Breadcrumbs">
               <Col>
                 {breadcrumbs}
               </Col>
             </Row>
-            <Row className="PageInfo">
+            <PageInfo>
               <Col md={6}>
-                <div className="Title">{title}</div>
-                <div className="Description">{description}</div>
+                <div className="Title" onClick={scrollToTop}>{title}</div>
+                <div className="Description" onClick={scrollToBottom}>{description}</div>
               </Col>
-            </Row>
+            </PageInfo>
             {children}
           </Container>
+          <div ref={bottomRef} />
           {/* <hr /> */}
         </div>
 

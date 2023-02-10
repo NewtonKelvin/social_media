@@ -179,10 +179,11 @@ module.exports = {
 
   async get(req, res){
 
-    const { folder, key } = req.params
+    const { param1: firstParam, param2, param3 } = req.params
+    const secondParam = (param3) ? `${param2}/${param3}` : param2
 
     const downloadParams = {
-      Key: `${folder}/${key}`,
+      Key: `${firstParam}/${secondParam}`,
       Bucket: bucketName
     }
 

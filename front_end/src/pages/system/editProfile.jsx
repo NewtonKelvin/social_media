@@ -6,12 +6,11 @@ import Link from "next/link"
 //Style
 import styled from "styled-components"
 //Context
-import { AuthContext } from "../../context/AuthContext"
+import { useAuth } from "../../context/AuthContext"
 import { AlertContext } from "../_app"
 import NProgress from "nprogress"
 //API
 import { api } from "../../services/api"
-import { getAPIClient } from "../../services/axios"
 //Bootstrap
 import { Col, Row } from "react-bootstrap"
 //Components
@@ -75,27 +74,27 @@ const CustomInput = styled.div`
   }
 `;
 
-export default function EditProfile({ usuario }) {
+export default function EditProfile() {
 
-  const { user } = useContext(AuthContext)
+  const { user } = useAuth()
 
-  const [avatarPicture, setAvatarPicture] = useState(`${process.env.BACK_END}/image/${usuario.avatar}`)
-  const [coverPicture, setCoverPicture] = useState(`${process.env.BACK_END}/image/${usuario.cover}`)
+  const [avatarPicture, setAvatarPicture] = useState(`${process.env.BACK_END}/image/${user?.avatar}`)
+  const [coverPicture, setCoverPicture] = useState(`${process.env.BACK_END}/image/${user?.cover}`)
 
   useEffect(() => {
-    setAvatarPicture(`${process.env.BACK_END}/image/${usuario.avatar}`)
-    setCoverPicture(`${process.env.BACK_END}/image/${usuario.cover}`)
-  }, [usuario.avatar, usuario.cover])
+    setAvatarPicture(`${process.env.BACK_END}/image/${user?.avatar}`)
+    setCoverPicture(`${process.env.BACK_END}/image/${user?.cover}`)
+  }, [user?.avatar, user?.cover])
   
   const { handleAlertOpen, handleAlertMessage, handleAlertSeverity } = useContext(AlertContext)
   const [errors, setErrors] = useState('')
 
-  const { register, handleSubmit, getValues } = useForm({
+  const { register, handleSubmit } = useForm({
     defaultValues: {
-      "name": usuario.name,
-      "username": usuario.username,
-      "email": usuario.email,
-      "bio": usuario.bio
+      "name": user?.name,
+      "username": user?.username,
+      "email": user?.email,
+      "bio": user?.bio
     }
   })
 
@@ -109,9 +108,6 @@ export default function EditProfile({ usuario }) {
     await api.post("/profile/update", data)
     .then((response) => {
 
-      usuario.name = data.name
-      usuario.username = data.username
-      usuario.bio = data.bio
       user.name = data.name
       user.username = data.username
       user.bio = data.bio
@@ -149,7 +145,6 @@ export default function EditProfile({ usuario }) {
         }
       }).then((response) => {
 
-        usuario.cover = response.data.filename
         user.cover = response.data.filename
 
         handleAlertSeverity('success')
@@ -187,7 +182,6 @@ export default function EditProfile({ usuario }) {
       })
       .then((response) => {
 
-        usuario.avatar = response.data.filename
         user.avatar = response.data.filename
 
         handleAlertSeverity('success')
@@ -221,7 +215,6 @@ export default function EditProfile({ usuario }) {
     >
       <CustomEditProfile>
         <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
-
           <Row>
             <Col className="Cover">
 
@@ -347,23 +340,5 @@ export default function EditProfile({ usuario }) {
       </CustomEditProfile>
     </Layout>
   );
-
-}
-
-export const getServerSideProps = async (ctx) => {
-
-  const apiClient = getAPIClient(ctx)
-  // Fetch data from external API
-  const response = await apiClient.get('/userByToken')
-
-  const responseAvatar = await apiClient.get(`/image/${response.data.user.avatar}`)
-  const responseCover = await apiClient.get(`/image/${response.data.user.cover}`)
-
-  const usuario = response.data.user
-
-  // Pass data to the page via props
-  return {
-    props: { usuario }
-  }
 
 }

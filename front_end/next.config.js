@@ -21,6 +21,10 @@ const nextConfig = {
       {
         source: '/config/editProfile',
         destination: '/system/editProfile',
+      },
+      {
+        source: '/post/:post',
+        destination: '/system/post/:post',
       }
     ]
   },

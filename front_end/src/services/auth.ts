@@ -15,15 +15,11 @@ export async function signInRequest(data: SignInRequestData){
   })
 
   .then((response) => {
-
-    // console.log("THEN >>>")
-    // console.log(response.data)
+    
     return response.data
     
   }).catch(({response}) => {
 
-    // console.log("CATCH >>>")
-    // console.log(response.data)
     return response.data
 
   })

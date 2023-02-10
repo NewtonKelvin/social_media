@@ -1,18 +1,36 @@
 import styled from "styled-components"
-import { Theme }  from '../styles/globals'
 
 const CustomButton = styled.div`
   margin: 10px 0;
+  width: ${props => props.square ? "38px" : "auto"};
+
+  &.transparent {
+    button {
+      color: var(--text);
+      background-color: transparent;
+    }
+  }
+  &.opacity {
+    button {
+      color: var(--text);
+      background-color: var(--input);
+    }
+  }
+
   button {
+    color: var(--text);
+    background-color: var(--opacity);
+
     display: flex;
     align-items: center;
     justify-content: ${props => props.alignLeft ? "flex-start" : "center"};
-    width: 100%;
+    width: ${props => props.square ? "38px" : "100%"};
     height: 38px;
-    color: ${props => props.transparent ? "var(--text)" : "var(--white)"};
-    background: ${props => props.transparent ? "transparent" : "var(--primary)"};
     font-weight: bold;
     transition: all var(--transition);
+
+    color: var(--white);
+    background: var(--primary);
 
     &:hover {
       background-color: var(--secondary);
@@ -28,10 +46,14 @@ const CustomButton = styled.div`
   }
 `
 
-export default function StyledButton({ children, transparent = false, alignLeft = false }){
+export default function StyledButton(props){
   return (
-    <CustomButton transparent={transparent} alignLeft={alignLeft}>
-      {children}
+    <CustomButton
+      alignLeft={props.alignLeft}
+      square={props.square}
+      {...props}
+    >
+      {props.children}
     </CustomButton>
   )
 }

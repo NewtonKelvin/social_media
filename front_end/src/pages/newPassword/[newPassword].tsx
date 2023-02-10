@@ -7,9 +7,6 @@ import { useForm, SubmitHandler } from 'react-hook-form'
 //API
 import { api } from '../../services/api'
 //Packages
-import { Box, Grid, Snackbar } from "@mui/material"
-import Slide from '@mui/material/Slide'
-import { Alert, Color } from '@material-ui/lab'
 import { Col, Row } from "react-bootstrap"
 //Context
 import { ThemeContext, AlertContext } from "../_app"
@@ -20,21 +17,13 @@ import StyledInput from "../../components/input"
 import StyledButton from "../../components/button"
 import StyledSwitch from "../../components/switch"
 //Icons
-import { AccountCircle, Fingerprint, Brightness3, WbSunny } from "@mui/icons-material"
+import { Fingerprint, Brightness3, WbSunny } from "@mui/icons-material"
 import StyledBrand from "../../components/brand"
 
 export default function Register() {
 
-  const { theme, toggleTheme, isDark } = useContext(ThemeContext)
+  const { toggleTheme, isDark } = useContext(ThemeContext)
   const { handleAlertOpen, handleAlertMessage, handleAlertSeverity } = useContext(AlertContext)
-
-  interface RegisterResponse {
-    data: {
-      error: boolean,
-      message: string,
-      field: string
-    }
-  }
 
   interface FormValues {
     password: string,
@@ -50,7 +39,7 @@ export default function Register() {
 
   const onSubmit: SubmitHandler<FormValues> = async (data:FormValues) => {
 
-    const response:any = await api.post('/newPassword', {...data, token})
+    await api.post('/newPassword', {...data, token})
     .then((response) => {
       
       handleAlertSeverity('success')

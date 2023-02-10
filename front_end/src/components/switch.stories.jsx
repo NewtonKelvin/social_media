@@ -1,4 +1,4 @@
-import Link from "next/link"
+import { useState } from "react";
 import StyledSwitch from "./switch"
 
 //👇 This default export determines where your story goes in the story list
@@ -8,19 +8,20 @@ export default {
 };
 
 //👇 We create a “template” of how args map to rendering
-const Template = ({ iconLeft, iconRight, checked, onChange }) => (
-  <StyledSwitch
-    iconLeft={iconLeft}
-    iconRight={iconRight}
-    checked={checked}
-    onChange={() => !checked}
-  />
-);
+const Template = ({ iconLeft, iconRight }) => {
+  const [state, setState] = useState(false)
+  return (
+    <StyledSwitch
+      iconLeft={iconLeft}
+      iconRight={iconRight}
+      checked={state}
+      onChange={() => setState(!state)}
+    />
+  )
+};
 
 export const Default = Template.bind({});
 Default.args = {
   iconLeft: "Light",
   iconRight: "Dark",
-  checked: false,
-  onChange: () => null
 };

@@ -2,7 +2,7 @@
 
 import StyledButton from "./button";
 //Icons
-import { AccountCircle, Fingerprint, Check } from "@mui/icons-material"
+import { AccountCircle } from "@mui/icons-material"
 
 //👇 This default export determines where your story goes in the story list
 export default {
@@ -11,11 +11,11 @@ export default {
 };
 
 //👇 We create a “template” of how args map to rendering
-const Template = ({ text, icon, transparent = false, alignLeft }) => (
-  <StyledButton transparent={transparent} alignLeft={alignLeft}>
+const Template = ({ text, icon, alignLeft, square }) => (
+  <StyledButton alignLeft={alignLeft} square={square}>
     <button type="button">
-      {(icon) && <Check />}
-      {text}
+      {(icon) && <AccountCircle />}
+      {(!square) && text}
     </button>
   </StyledButton>
 );
@@ -24,6 +24,6 @@ export const Default = Template.bind({});
 Default.args = {
   text: "Button",
   icon: false,
-  transparent: false,
-  alignLeft: false
+  alignLeft: false,
+  square: false
 };

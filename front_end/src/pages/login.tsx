@@ -4,17 +4,13 @@ import Head from "next/head"
 import Link from "next/link"
 import { useForm, SubmitHandler } from "react-hook-form"
 import { useRouter } from "next/router"
-import { AxiosRequestConfig } from "axios"
-//API
-import { api } from "../services/api"
-import { AlertContext, ThemeContext } from "./_app"
 //Context
-import { AuthContext } from '../context/AuthContext'
+import { AlertContext, ThemeContext } from "./_app"
+import { useAuth } from '../context/AuthContext'
 //Packages
-import { Alert, Color } from '@material-ui/lab'
 import { Col, Row } from "react-bootstrap"
 //Style
-import StyledContainerL2, { StyledContainerL, StyledContainerR } from "../styles/login"
+import StyledContainerL2, { StyledContainerR } from "../styles/login"
 //Components
 import StyledInput from "../components/input"
 import StyledButton from "../components/button"
@@ -25,9 +21,9 @@ import { AccountCircle, Fingerprint, Brightness3, WbSunny } from "@mui/icons-mat
 
 export default function Login() {
 
-  const { theme, toggleTheme, isDark } = useContext(ThemeContext)
+  const { toggleTheme, isDark } = useContext(ThemeContext)
   const { handleAlertOpen, handleAlertMessage, handleAlertSeverity } = useContext(AlertContext)
-  const { signIn } = useContext(AuthContext)  
+  const { signIn } = useAuth()
   
   const router = useRouter()
 

@@ -130,4 +130,32 @@ module.exports = {
     });
 
   },
+
+  async likes(req, res){
+
+    const uID = req.uID
+    Users.findByPk(uID)
+    .then((user) => {
+      if(user){
+        return res.status(200).json({
+          error: false,
+          message: "Usuário encontrado com sucesso",
+          likes: user.likes
+        })
+      } else {
+        return res.status(200).json({
+          error: true,
+          message: "Falha ao encontrar usuário"
+        })
+      }
+    })
+    .catch((err) => {
+      return res.status(200).json({
+        error: true,
+        message: "Erro ao encontrar usuário: "+err
+      })
+    })
+
+  }
+
 };

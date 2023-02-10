@@ -6,15 +6,14 @@ import Router from "next/router"
 import { parseCookies, setCookie } from "nookies"
 import NProgress from "nprogress"
 //MATERIAL UI
-import { Box, Grid, Snackbar, Switch } from "@mui/material"
+import { Snackbar } from "@mui/material"
 import Slide from '@mui/material/Slide'
 //STYLE
-import { ThemeProvider } from "styled-components"
 import GlobalStyle  from "../styles/globals"
 import GlobalNProgress  from "../styles/nprogress"
 //???
 import { Alert, Color } from '@material-ui/lab'
-import AuthProvider from "../context/AuthContext"
+import { AuthProvider } from "../context/AuthContext"
 
 //NProgress
 if (typeof window !== "undefined") {

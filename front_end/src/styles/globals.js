@@ -98,6 +98,18 @@ const GlobalStyle = createGlobalStyle`
     font-weight: bold;
   }
 
+  div.modal-content {
+
+    background-color: var(--container);
+    color: var(--text);
+    div {
+      border: none;
+    }
+    button.btn-close {
+      background-color: var(--red);
+    }
+  }
+
   /* CUSTOM */
 
   hr {
@@ -110,7 +122,7 @@ const GlobalStyle = createGlobalStyle`
 
   textarea {
     font-weight: 500;
-    width: 100%;
+    /* width: 100%; */
     color: var(--text);
     background-color: var(--input);
     margin: 10px;
@@ -145,14 +157,14 @@ const GlobalStyle = createGlobalStyle`
     animation-duration: 1s;
     animation-iteration-count: infinite;
     animation-direction: alternate;
-    animation-timing-function: linear; 
+    animation-timing-function: ease-in-out;
   }
   @keyframes backgroundColorPalette {
     0% {
-      background: var(--primary);
+      background: var(--input);
     }
     100% {
-      background: var(--secondary);
+      background: var(--container);
     }
   }
 

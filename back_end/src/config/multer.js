@@ -7,7 +7,7 @@ const tmpFolder = path.resolve(__dirname, "..", "..", "tmp")
 module.exports = {
   directory: tmpFolder,
   limits: {
-    fileSize: 2 * 1024 * 1024 //1 MB
+    fileSize: 2 * 1024 * 1024 //2 MB
   },
   storage: multer.diskStorage({
     destination: tmpFolder,

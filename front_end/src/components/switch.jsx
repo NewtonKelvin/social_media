@@ -1,7 +1,5 @@
 import styled from "styled-components"
-import { IconProps, SvgIconProps, Switch } from "@mui/material"
-import { ReactElement } from "react"
-import { SvgIconTypeMap } from "@material-ui/core"
+import { Switch } from "@mui/material"
 
 const CustomSwitcher = styled.div`
   span.active {

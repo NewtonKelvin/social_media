@@ -1,7 +1,7 @@
 // YourComponent.stories.js|jsx
 import StyledInput from "./input";
 //Icons
-import { AccountCircle, Fingerprint, Check } from "@mui/icons-material"
+import { AccountCircle, Send } from "@mui/icons-material"
 
 //👇 This default export determines where your story goes in the story list
 export default {
@@ -16,16 +16,21 @@ export default {
 };
 
 //👇 We create a “template” of how args map to rendering
-const Template = ({ label, labelText, noIcon, type, placeholder, ariaInvalid, ariaValid }) => (
-  <StyledInput noIcon={noIcon}>
+const Template = ({ label, labelText, withIcon, withButton, type, placeholder, ariaInvalid, ariaValid }) => (
+  <StyledInput withIcon={withIcon}>
     {(label) && <label>{labelText}</label>}
-    {(!noIcon) && <AccountCircle />}
+    {(withIcon) && <AccountCircle />}
     <input
       type={type}
       placeholder={placeholder}
       aria-invalid={ariaInvalid}
       aria-valid={ariaValid}
-    />
+      />
+    {(withButton) &&
+      <button type="submit">
+        <Send fontSize="small" />
+      </button>
+    }
   </StyledInput>
 );
 
@@ -33,7 +38,8 @@ export const Default = Template.bind({});
 Default.args = {
   label: true,
   labelText: "Username:",
-  noIcon: false,
+  withIcon: true,
+  withButton: false,
   type: "text",
   placeholder: "Insert your username...",
   ariaInvalid: false,

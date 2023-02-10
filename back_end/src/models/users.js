@@ -64,6 +64,28 @@ const Users = db.sequelize.define('users', {
       this.setDataValue('notifications', JSON.stringify(value));
     }
   },
+  likes: {
+    type: db.Sequelize.STRING,
+    defaultValue: '[]',
+    allowNull: false,
+    get: function () {
+      return JSON.parse(this.getDataValue('likes'));
+    },
+    set: function (value) {
+      this.setDataValue('likes', JSON.stringify(value));
+    }
+  },
+  shares: {
+    type: db.Sequelize.STRING,
+    defaultValue: '[]',
+    allowNull: false,
+    get: function () {
+      return JSON.parse(this.getDataValue('shares'));
+    },
+    set: function (value) {
+      this.setDataValue('shares', JSON.stringify(value));
+    }
+  },
   createdAt: {
     type: 'TIMESTAMP',
     defaultValue: db.Sequelize.literal('CURRENT_TIMESTAMP'),
