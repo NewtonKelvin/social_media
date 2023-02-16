@@ -8,6 +8,10 @@ Seja bem-vindo!
 
 O **propósito** inicial deste projeto é o **estudo** e também para exibir meu nível de **conhecimento**, aplicando todo (ou quase todo) o conhecimento adquirido em Javascript, mais especificamente em **ReactJS** e **NodeJS**. Este repositório também será utilizado para consultas de código e referências!
 
+## Design
+
+Design feito no **Figma**, [clique aqui](https://www.figma.com/file/PUyL91flhlffrMmGY9Dsvs/INSTAGRAM-PROJECT?t=UKN8wKSXyzW1x6BR-1)
+
 ## Projeto
 
 O projeto, como o próprio nome diz, é uma rede social tal como o Instagram porém em proporções menores
