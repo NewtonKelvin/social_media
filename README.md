@@ -10,7 +10,7 @@ O **propósito** inicial deste projeto é o **estudo** e também para exibir meu
 
 ## Design
 
-Design feito no **Figma**, [clique aqui](https://www.figma.com/file/PUyL91flhlffrMmGY9Dsvs/INSTAGRAM-PROJECT?t=UKN8wKSXyzW1x6BR-1)
+Design feito no **Figma**, [clique aqui](https://www.figma.com/file/PUyL91flhlffrMmGY9Dsvs/INSTAGRAM-PROJECT?node-id=31%3A2&t=k0Rm4qQvAvC8cbRj-0)
 
 ## Projeto
 
