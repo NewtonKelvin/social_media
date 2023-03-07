@@ -1,44 +1,49 @@
-const db = require('./database')
-const Users = require('./users')
-const Comments = require('./comments');
+const db = require("./database");
+const Users = require("./users");
+const Comments = require("./comments");
 
-const Posts = db.sequelize.define('posts', {
+const Posts = db.sequelize.define("posts", {
   id: {
     type: db.Sequelize.INTEGER,
     autoIncrement: true,
     allowNull: false,
-    primaryKey: true
+    primaryKey: true,
   },
   token: {
     type: db.Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
   },
   userId: {
     type: db.Sequelize.INTEGER,
-    allowNull: false
+    allowNull: false,
+    references: {
+      model: Users,
+      key: "id",
+    },
   },
   description: {
     type: db.Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
   },
   privacity: {
     type: db.Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
   },
   files: {
     type: db.Sequelize.STRING,
-    defaultValue: '[]',
+    defaultValue: "[]",
     allowNull: false,
     get: function () {
-      return JSON.parse(this.getDataValue('files'));
+      return JSON.parse(this.getDataValue("files"));
     },
     set: function (value) {
-      this.setDataValue('files', JSON.stringify(value));
-    }
+      this.setDataValue("files", JSON.stringify(value));
+    },
   },
   likes: {
     type: db.Sequelize.INTEGER,
-    allowNull: false
+    allowNull: false,
+    defaultValue: 0,
   },
   /*comments: {
     type: db.Sequelize.TEXT('long'),
@@ -53,28 +58,29 @@ const Posts = db.sequelize.define('posts', {
   },*/
   shares: {
     type: db.Sequelize.INTEGER,
-    allowNull: false
+    allowNull: false,
+    defaultValue: 0,
   },
   createdAt: {
-    type: 'TIMESTAMP',
-    defaultValue: db.Sequelize.literal('CURRENT_TIMESTAMP'),
+    type: "TIMESTAMP",
+    defaultValue: db.Sequelize.literal("CURRENT_TIMESTAMP"),
     allowNull: false,
-    default: false
+    default: false,
   },
   updatedAt: {
-    type: 'TIMESTAMP',
-    defaultValue: db.Sequelize.literal('CURRENT_TIMESTAMP'),
+    type: "TIMESTAMP",
+    defaultValue: db.Sequelize.literal("CURRENT_TIMESTAMP"),
     allowNull: false,
-    default: false
-  }
-})
-
-Posts.belongsTo(Users, {
-  foreignKey: 'userId'
+    default: false,
+  },
 });
+
 Posts.hasMany(Comments, {
-  foreignKey: 'postToken'
+  foreignKey: "token",
 });
-module.exports = Posts
 
-Posts.sync({ force: false })
+Posts.belongsTo(Users);
+
+module.exports = Posts;
+
+Posts.sync({ force: false });

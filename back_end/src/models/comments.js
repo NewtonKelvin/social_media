@@ -16,10 +16,18 @@ const Comments = db.sequelize.define("comments", {
   postToken: {
     type: db.Sequelize.STRING,
     allowNull: false,
+    references: {
+      model: Posts,
+      key: "token",
+    },
   },
   userId: {
     type: db.Sequelize.INTEGER,
     allowNull: false,
+    references: {
+      model: Users,
+      key: "id",
+    },
   },
   value: {
     type: db.Sequelize.STRING,

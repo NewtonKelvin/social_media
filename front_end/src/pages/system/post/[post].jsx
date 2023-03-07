@@ -1,30 +1,30 @@
 //Next React
-import Image from "next/image"
-import { useContext, useRef, useState } from "react"
-import styled from "styled-components"
-import { useRouter } from "next/router"
+import Image from "next/image";
+import { useContext, useRef, useState } from "react";
+import styled from "styled-components";
+import { useRouter } from "next/router";
 //React Bootstrap / Material UI
-import { Col, Row } from "react-bootstrap"
+import { Col, Row } from "react-bootstrap";
 //Components
-import Layout, { LayoutContext } from "../../../components/layout"
-import StyledCarousel from "../../../components/carousel"
-import StyledButton from "../../../components/button"
-import StyledInput from "../../../components/input"
+import Layout, { LayoutContext } from "../../../components/layout";
+import StyledCarousel from "../../../components/carousel";
+import StyledButton from "../../../components/button";
+import StyledInput from "../../../components/input";
 //Context
-import { getAPIClient } from "../../../services/axios"
-import { AlertContext } from "../../_app"
-import { useAuth } from "../../../context/AuthContext"
+import { getAPIClient } from "../../../services/axios";
+import { AlertContext } from "../../_app";
+import { useAuth } from "../../../context/AuthContext";
 //Moment
-import * as moment from "moment"
-moment.locale("pt-br")
-import 'moment/locale/pt-br'
+import * as moment from "moment";
+moment.locale("pt-br");
+import "moment/locale/pt-br";
 //Icons
-import { Comment, Delete, Favorite, ReplyAll, Send } from "@mui/icons-material"
+import { Comment, Delete, Favorite, ReplyAll, Send } from "@mui/icons-material";
 //Utils
-import formatNumber from "../../../utils/formatNumber"
-import { useForm } from "react-hook-form"
+import formatNumber from "../../../utils/formatNumber";
+import { useForm } from "react-hook-form";
 //API
-import { api } from "../../../services/api"
+import { api } from "../../../services/api";
 
 const CustomFeed = styled.div`
   div.row {
@@ -34,8 +34,8 @@ const CustomFeed = styled.div`
     margin: 5px 0px 15px 0px;
     display: grid;
     grid-template-areas:
-    "Photo Name"
-    "Photo Username";
+      "Photo Name"
+      "Photo Username";
     grid-template-columns: 60px 1fr;
     align-items: center;
     .Photo {
@@ -46,7 +46,7 @@ const CustomFeed = styled.div`
         border-radius: 10px !important;
         width: 60px;
         height: 60px;
-        
+
         object-fit: cover;
         width: 100%;
         aspect-ratio: 1 / 1;
@@ -104,8 +104,8 @@ const CustomFeed = styled.div`
   .Comments {
     display: grid;
     grid-template-areas:
-    "Photo Name Actions"
-    "Photo Comment Comment";
+      "Photo Name Actions"
+      "Photo Comment Comment";
     grid-template-columns: 60px auto 40px;
     align-items: center;
     background-color: var(--input);
@@ -124,12 +124,12 @@ const CustomFeed = styled.div`
       padding: 0 5px;
       display: flex;
       border-radius: 10px;
-      
+
       img {
         border-radius: 10px !important;
         width: 60px;
         height: 60px;
-        
+
         object-fit: cover;
         width: 100%;
         aspect-ratio: 1 / 1;
@@ -181,75 +181,79 @@ const CustomFeed = styled.div`
 `;
 
 export default function Feed({ post, comments, uLikes }) {
+  const router = useRouter();
+  const { post: token } = router.query;
 
-  const router = useRouter()
-  const { post: token } = router.query
+  const { scrollToTop, scrollToBottom } = useContext(LayoutContext);
 
-  const { scrollToTop, scrollToBottom } = useContext(LayoutContext)
+  const { user } = useAuth();
 
-  const { user } = useAuth()
+  const [liked, setLiked] = useState(
+    uLikes.some(() => uLikes.includes(token)) ? true : false
+  );
+  const [allComments, setAllComments] = useState(comments);
 
-  const [ liked, setLiked ] = useState((uLikes.some(() => uLikes.includes(token))) ? true : false)
-  const [ allComments, setAllComments ] = useState(comments)
+  let errorMessage = "🤖🔧 Falha ao realizar ação, tente novamente mais tarde";
 
-  const { register: registerComment, handleSubmit: handleSubmitComment, reset } = useForm()
-  const { handleAlertOpen, handleAlertMessage, handleAlertSeverity } = useContext(AlertContext)
+  const {
+    register: registerComment,
+    handleSubmit: handleSubmitComment,
+    reset,
+  } = useForm();
+  const { handleAlertOpen, handleAlertMessage, handleAlertSeverity } =
+    useContext(AlertContext);
 
-  const onSubmit = async ({comment}) => {
-    
-    await api.put('/postComment', {
-      token,
-      comment
-    })
-    .then(({data}) => {
-      
-      setAllComments(data.comments)
-      reset()
-      handleAlertSeverity('success')
-      handleAlertMessage(data.message)
-      handleAlertOpen(true)
-      
-    }).catch(({response}) => {
-
-      handleAlertSeverity('error')
-      handleAlertMessage(response.data.message)
-      handleAlertOpen(true)
-
-    })
-
-  }
+  const onSubmit = async ({ comment }) => {
+    await api
+      .put("/postComment", {
+        token,
+        comment,
+      })
+      .then(({ data }) => {
+        setAllComments(data.comments);
+        reset();
+        handleAlertSeverity("success");
+        handleAlertMessage(data.message || errorMessage);
+        handleAlertOpen(true);
+      })
+      .catch(({ response }) => {
+        handleAlertSeverity("error");
+        handleAlertMessage(response.data.message || errorMessage);
+        handleAlertOpen(true);
+      });
+  };
 
   const onLike = async () => {
-    await api.put(`/postLike/${token}`)
-    .then((response) => {
-      
-      post.likes = response.data.postLikes
-      uLikes = response.data.userLikes
-      setLiked((uLikes.some(() => uLikes.includes(token))) ? true : false)
-      
-    }).catch(({response}) => {
-
-      handleAlertSeverity('error')
-      handleAlertMessage(response.data.message)
-      handleAlertOpen(true)
-
-    }) 
-  }
+    await api
+      .put(`/postLike/${token}`)
+      .then((response) => {
+        post.likes = response.data.postLikes;
+        uLikes = response.data.userLikes;
+        setLiked(uLikes.some(() => uLikes.includes(token)) ? true : false);
+      })
+      .catch(({ response }) => {
+        handleAlertSeverity("error");
+        handleAlertMessage(response.data.message || errorMessage);
+        handleAlertOpen(true);
+      });
+  };
 
   const deleteComment = async (token) => {
-    await api.put(`/deleteComment/${token}`)
-    .then((response) => {
+    await api
+      .delete(`/deleteComment/${post.token}/${token}`)
+      .then((response) => {
+        setAllComments(response.data.comments);
 
-      // setAllComments((uLikes.some(() => uLikes.includes(token))) ? true : false)
-      
-    }).catch(({response}) => {
-
-      handleAlertSeverity('error')
-      handleAlertMessage(response.data.message)
-      handleAlertOpen(true)
-
-    })
-  }
+        handleAlertSeverity("success");
+        handleAlertMessage(response.data.message);
+        handleAlertOpen(true);
+      })
+      .catch(({ response }) => {
+        handleAlertSeverity("error");
+        handleAlertMessage(response.data.message || errorMessage);
+        handleAlertOpen(true);
+      });
+  };
 
   return (
     <>
@@ -284,12 +288,12 @@ export default function Feed({ post, comments, uLikes }) {
           </Row>
           <Row>
             <Col md={3} className="Numbers">
-              <StyledButton className={(liked) ? "primary" : "opacity"} square>
+              <StyledButton className={liked ? "primary" : "opacity"} square>
                 <button onClick={() => onLike()}>
                   <Favorite />
                 </button>
               </StyledButton>
-              {formatNumber(post.likes)} {(post.likes == 1 ? "Like" : "Likes")}
+              {formatNumber(post.likes)} {post.likes == 1 ? "Like" : "Likes"}
             </Col>
             <Col md={3} className="Numbers">
               <StyledButton className="opacity" square>
@@ -297,7 +301,8 @@ export default function Feed({ post, comments, uLikes }) {
                   <Comment />
                 </button>
               </StyledButton>
-              {formatNumber(allComments.length)}  {(allComments.length == 1 ? "Comment" : "Comments")}
+              {formatNumber(allComments.length)}{" "}
+              {allComments.length == 1 ? "Comment" : "Comments"}
             </Col>
             <Col md={3} className="Numbers">
               <StyledButton className="opacity" square>
@@ -305,16 +310,15 @@ export default function Feed({ post, comments, uLikes }) {
                   <ReplyAll />
                 </button>
               </StyledButton>
-              {formatNumber(post.shares)} {(post.shares == 1 ? "Share" : "Shares")}
+              {formatNumber(post.shares)}{" "}
+              {post.shares == 1 ? "Share" : "Shares"}
             </Col>
           </Row>
           <Row>
             <Col md={12}>
               <StyledInput>
                 <form onSubmit={handleSubmitComment(onSubmit)}>
-                  <label htmlFor="">
-                    Deixe um comentário:
-                  </label>
+                  <label htmlFor="">Deixe um comentário:</label>
                   <Comment fontSize="small" />
                   <input
                     type="text"
@@ -345,11 +349,15 @@ export default function Feed({ post, comments, uLikes }) {
                     <div className="Name">
                       {comment.user.name}
                       <span className="Username">
-                        @{comment.user.username} - {moment(comment.createdAt).fromNow()}
+                        @{comment.user.username} -{" "}
+                        {moment(comment.createdAt).fromNow()}
                       </span>
                     </div>
                     <div className="Actions">
-                      <Delete fontSize="small" onClick={() => deleteComment(comment.token)} />
+                      <Delete
+                        fontSize="small"
+                        onClick={() => deleteComment(comment.token)}
+                      />
                     </div>
                     <div className="Comment">{comment.value}</div>
                   </div>
@@ -364,7 +372,7 @@ export default function Feed({ post, comments, uLikes }) {
 }
 
 export const getServerSideProps = async (ctx) => {
-  const { post: token } = ctx.params
+  const { post: token } = ctx.params;
   if (!token) {
     ctx.res.statusCode = 302;
     ctx.res.setHeader("Location", "/feed");
@@ -379,42 +387,42 @@ export const getServerSideProps = async (ctx) => {
 
   //Pega os dados da publicação
   await apiClient
-  .get(`/post/${token}`)
-  .then(async ({ data }) => {
-    post = data.post
-  })
-  .catch(() => {
-    ctx.res.statusCode = 302;
-    ctx.res.setHeader("Location", "/feed");
-    ctx.res.end();
-    return { props: {} };
-  });
+    .get(`/post/${token}`)
+    .then(async ({ data }) => {
+      post = data.post;
+    })
+    .catch(() => {
+      ctx.res.statusCode = 302;
+      ctx.res.setHeader("Location", "/feed");
+      ctx.res.end();
+      return { props: {} };
+    });
 
   //Pega os comentários da publicação
   await apiClient
-  .get(`/postComments/${token}`)
-  .then(async ({ data }) => {
-    comments = data.comments
-  })
-  .catch(() => {
-    ctx.res.statusCode = 302;
-    ctx.res.setHeader("Location", "/feed");
-    ctx.res.end();
-    return { props: {} };
-  });
+    .get(`/postComments/${token}`)
+    .then(async ({ data }) => {
+      comments = data.comments;
+    })
+    .catch(() => {
+      ctx.res.statusCode = 302;
+      ctx.res.setHeader("Location", "/feed");
+      ctx.res.end();
+      return { props: {} };
+    });
 
   //Pega os likes do usuário
   await apiClient
-  .get("/userLikes")
-  .then(async ({ data }) => {
-    uLikes = data.likes
-  })
-  .catch(() => {
-    ctx.res.statusCode = 302;
-    ctx.res.setHeader("Location", "/feed");
-    ctx.res.end();
-    return { props: {} };
-  });
+    .get("/userLikes")
+    .then(async ({ data }) => {
+      uLikes = data.likes;
+    })
+    .catch(() => {
+      ctx.res.statusCode = 302;
+      ctx.res.setHeader("Location", "/feed");
+      ctx.res.end();
+      return { props: {} };
+    });
 
   // Pass data to the page via props
   return {

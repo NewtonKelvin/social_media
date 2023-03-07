@@ -1,12 +1,12 @@
-const Users = require("../models/users")
-const Posts = require("../models/posts")
-const Comments = require("../models/comments")
-const env = process.env.NODE_ENV || "development"
-const crypto = require("crypto")
+const Users = require("../models/users");
+const Posts = require("../models/posts");
+const Comments = require("../models/comments");
+const env = process.env.NODE_ENV || "development";
+const crypto = require("crypto");
 
-const fs = require("fs")
-const util = require("util")
-const unlinkFile = util.promisify(fs.unlink)
+const fs = require("fs");
+const util = require("util");
+const unlinkFile = util.promisify(fs.unlink);
 
 //JWT AUTH
 require("dotenv-safe").config();
@@ -16,36 +16,43 @@ const jwt = require("jsonwebtoken");
 const { Op } = require("sequelize");
 
 //AWS S3
-const S3 = require("aws-sdk/clients/s3")
+const S3 = require("aws-sdk/clients/s3");
 const { S3Client, GetObjectCommand } = require("@aws-sdk/client-s3");
-const { post } = require("../routes")
+const { post } = require("../routes");
 
-const bucketName = process.env.AWS_BUCKET_NAME
-const region = process.env.AWS_BUCKET_REGION
-const accessKey = process.env.AWS_ACCESS_KEY
-const secretAcessKey = process.env.AWS_SECRET_ACCESS_KEY
+const bucketName = process.env.AWS_BUCKET_NAME;
+const region = process.env.AWS_BUCKET_REGION;
+const accessKey = process.env.AWS_ACCESS_KEY;
+const secretAcessKey = process.env.AWS_SECRET_ACCESS_KEY;
 
 const s3 = new S3({
   region,
   accessKey,
-  secretAcessKey
-})
+  secretAcessKey,
+});
 
 module.exports = {
+  async insert(req, res) {
+    const { description, privacity } = req.body;
+    const myFiles = req.files;
 
-  async insert(req, res){
-
-    const { description, privacity } = req.body
-    const myFiles = req.files
-
-    if (!description || description == null || typeof description === undefined) {
+    if (
+      !description ||
+      description == null ||
+      typeof description === undefined
+    ) {
       return res.status(400).json({
         error: true,
         message: "Descrição não pode ser vazia",
         field: "description",
       });
     }
-    if (!privacity || privacity == null || privacity == "null" || typeof privacity === undefined) {
+    if (
+      !privacity ||
+      privacity == null ||
+      privacity == "null" ||
+      typeof privacity === undefined
+    ) {
       return res.status(400).json({
         error: true,
         message: "Privacidade deve ser escolhida",
@@ -60,22 +67,22 @@ module.exports = {
       });
     }
 
-    const postHash = crypto.randomBytes(10).toString('hex')
-    const fileList = []
+    const postHash = crypto.randomBytes(10).toString("hex");
+    const fileList = [];
 
     myFiles.forEach(async (element, index) => {
-      const fileName = element.filename
-      fileList.push(`post/${postHash}/${fileName}`)
-      
-      const fileStream = fs.createReadStream(element.path)
+      const fileName = element.filename;
+      fileList.push(`post/${postHash}/${fileName}`);
+
+      const fileStream = fs.createReadStream(element.path);
       const uploadParams = {
         Bucket: bucketName,
         Body: fileStream,
-        Key: `post/${postHash}/${fileName}`
-      }
-      await s3.upload(uploadParams).promise()
+        Key: `post/${postHash}/${fileName}`,
+      };
+      await s3.upload(uploadParams).promise();
       //DELETE LOCAL FILE
-      await unlinkFile(`tmp/${fileName}`)
+      await unlinkFile(`tmp/${fileName}`);
     });
 
     Posts.create({
@@ -83,32 +90,32 @@ module.exports = {
       userId: req.uID,
       description,
       privacity,
-      files: fileList
-    }).then(post => {
-      if(post){
-        return res.status(200).json({
-          error: false,
-          message: "Publicação criada com sucesso!",
-          link: `/post/${post.token}`
-        });
-      } else {
+      files: fileList,
+    })
+      .then((post) => {
+        if (post) {
+          return res.status(200).json({
+            error: false,
+            message: "Publicação criada com sucesso!",
+            link: `/post/${post.token}`,
+          });
+        } else {
+          return res.status(500).json({
+            error: true,
+            message: "Erro ao criar publicação!",
+          });
+        }
+      })
+      .catch((err) => {
         return res.status(500).json({
           error: true,
-          message: "Erro ao criar publicação!"
+          message: "Falha ao criar publicação: " + err,
         });
-      }
-    }).catch(err => {
-      return res.status(500).json({
-        error: true,
-        message: "Falha ao criar publicação: " + err
       });
-    })
-
   },
 
-  async get(req, res){
-
-    const { token } = req.params
+  async get(req, res) {
+    const { token } = req.params;
 
     if (!token || token == null || typeof token === undefined) {
       return res.status(400).json({
@@ -120,43 +127,46 @@ module.exports = {
 
     Posts.findOne({
       where: { token },
-      include: [{
-        model: Users,
-        as: 'user',
-        attributes: ['name', 'username', 'avatar']
-      }, {
-        model: Comments,
-        as: 'comments',
-        attributes: ['userId', 'value']
-      }]
-    }).then(post => {
-      if(post){        
-        return res.status(200).json({
-          error: false,
-          message: "Publicação encontrada!",
-          post
-        });
-      } else {
+      include: [
+        {
+          model: Users,
+          as: "user",
+          attributes: ["name", "username", "avatar"],
+        },
+        {
+          model: Comments,
+          as: "comments",
+          attributes: ["userId", "value"],
+        },
+      ],
+    })
+      .then((post) => {
+        if (post) {
+          return res.status(200).json({
+            error: false,
+            message: "Publicação encontrada!",
+            post,
+          });
+        } else {
+          return res.status(500).json({
+            error: true,
+            message: "Erro ao encontrar publicação!",
+          });
+        }
+      })
+      .catch((err) => {
         return res.status(500).json({
           error: true,
-          message: "Erro ao encontrar publicação!"
+          message: "Falha ao encontrar publicação: " + err,
         });
-      }
-    }).catch(err => {
-      return res.status(500).json({
-        error: true,
-        message: "Falha ao encontrar publicação: " + err
       });
-    })
-
   },
 
-  async comment(req, res){
+  async comment(req, res) {
+    const { token, comment } = req.body;
+    const uID = req.uID;
+    const commentHash = crypto.randomBytes(10).toString("hex");
 
-    const { token, comment } = req.body
-    const uID = req.uID
-    const commentHash = crypto.randomBytes(10).toString('hex')
-    
     if (!token || token == null || typeof token === undefined) {
       return res.status(400).json({
         error: true,
@@ -174,79 +184,84 @@ module.exports = {
     }
 
     Posts.findOne({
-      where: { token }
+      where: { token },
     })
-    .then((post) => {
-      if(post) {
-
-        Comments.create({
-          token: commentHash,
-          postId: post.id,
-          userId: uID,
-          value: comment
-        })
-        .then((comment) => {
-          if(comment){
-
-            Comments.findAll({
-              where: { postId: post.id },
-              include: Users
-            }).then((comments) => {
-
-              if(comments){
-                return res.status(200).json({
-                  error: false,
-                  message: "Comentário enviado com sucesso!",
-                  comments
+      .then((post) => {
+        if (post) {
+          Comments.create({
+            token: commentHash,
+            postToken: post.token,
+            userId: uID,
+            value: comment,
+          })
+            .then((comment) => {
+              if (comment) {
+                Comments.findAll({
+                  where: { postToken: post.token },
+                  attributes: ["token", "postToken", "updatedAt", "value"],
+                  include: {
+                    model: Users,
+                    as: "user",
+                    attributes: ["name", "username", "avatar"],
+                  },
                 })
+                  .then((comments) => {
+                    if (comments) {
+                      return res.status(200).json({
+                        error: false,
+                        message: "Comentário enviado com sucesso!",
+                        comments,
+                      });
+                    } else {
+                      return res.status(500).json({
+                        error: true,
+                        message: "Erro ao encontrar comentários!",
+                      });
+                    }
+                  })
+                  .catch((err) => {
+                    return res.status(500).json({
+                      error: true,
+                      message: "Falha ao encontrar comentário: " + err,
+                    });
+                  });
               } else {
                 return res.status(500).json({
                   error: true,
-                  message: "Erro ao encontrar comentários!"
+                  message: "Erro ao enviar comentário!",
                 });
               }
-
-            }).catch((err) => {
+            })
+            .catch((err) => {
               return res.status(500).json({
                 error: true,
-                message: "Falha ao encontrar comentário: " + err
+                message: "Falha ao enviar comentário: " + err,
               });
-            })
-
-          } else {
-            return res.status(500).json({
-              error: true,
-              message: "Erro ao enviar comentário!"
             });
-          }
-        }).catch((err) => {
+        } else {
           return res.status(500).json({
             error: true,
-            message: "Falha ao enviar comentário: " + err
+            message: "Erro ao encontrar publicação!",
           });
-        })
-
-      } else {
+        }
+      })
+      .catch((err) => {
         return res.status(500).json({
           error: true,
-          message: "Erro ao encontrar publicação!"
+          message: "Falha ao encontrar publicação: " + err,
         });
-      }
-    }).catch(err => {
-      return res.status(500).json({
-        error: true,
-        message: "Falha ao encontrar publicação: " + err
       });
-    })
-
   },
 
-  async deleteComment(req, res){
+  async deleteComment(req, res) {
+    const { postToken, commentToken } = req.params;
+    const uID = req.uID;
 
-    const { postToken, commentToken } = req.params
-    const uID = req.uID
-    
-    if (!commentToken || commentToken == null || typeof commentToken === undefined) {
+    if (
+      !commentToken ||
+      commentToken == null ||
+      typeof commentToken === undefined
+    ) {
       return res.status(400).json({
         error: true,
         message: "Token do comentário não pode ser vazio",
@@ -262,60 +277,53 @@ module.exports = {
     }
 
     Comments.destroy({
-      where: { commentToken }
+      where: { token: commentToken, postToken, userId: uID },
+      include: {
+        model: Posts,
+      },
     })
-    .then((post) => {
-      if(post) {
-
-        Comments.findAll({
-          include: {
-            model: Posts,
-            as: "post",
-            attributes: ['token'],
-            where: { token: postToken }
-          }
-        }).then((post) => {
-          
-          if(post){
-            return res.status(500).json({
-              error: false,
-              message: "Comentário apagado com sucesso!",
-              comments: post
+      .then((post) => {
+        if (post === 1) {
+          Comments.findAll({
+            where: { postToken },
+            include: {
+              model: Users,
+              as: "user",
+              attributes: ["name", "username", "avatar"],
+            },
+          })
+            .then((allComments) => {
+              return res.status(200).json({
+                error: false,
+                message: "Comentário apagado com sucesso!",
+                comments: allComments,
+              });
+            })
+            .catch((err) => {
+              return res.status(500).json({
+                error: true,
+                message: "Falha ao encontrar comentários: " + err,
+              });
             });
-          } else {
-            return res.status(500).json({
-              error: true,
-              message: "Erro ao encontrar publicação!"
-            });
-          }
-
-        }).catch((err) => {
+        } else {
           return res.status(500).json({
             error: true,
-            message: "Falha ao encontrar publicação: " + err
+            message: "Erro ao apagar, comentário não encontrado",
           });
-        })
-
-      } else {
+        }
+      })
+      .catch((err) => {
         return res.status(500).json({
           error: true,
-          message: "Erro ao encontrar comentário!"
+          message: "Falha ao encontrar comentário: " + err,
         });
-      }
-    }).catch(err => {
-      return res.status(500).json({
-        error: true,
-        message: "Falha ao encontrar comentário: " + err
       });
-    })
-
   },
 
-  async like(req, res){
+  async like(req, res) {
+    const { token } = req.params;
+    const uID = req.uID;
 
-    const { token } = req.params
-    const uID = req.uID
-    
     if (!token || token == null || typeof token === undefined) {
       return res.status(400).json({
         error: true,
@@ -325,111 +333,103 @@ module.exports = {
     }
 
     Users.findByPk(uID)
-    .then((user) => {
-      if(user){
-
-        let userLikes = user.likes
-        if (userLikes.some(list => userLikes.includes(token))) {
-
-          //REMOVE USER LIKE
-          userLikes = userLikes.filter(postToken => postToken !== token)
-          user.update({
-            likes: userLikes
-          })
-          //REMOVE POST LIKE
-          Posts.findOne({
-            where: { token },
-          }).then((post) => {
-            if(post){
-      
-              let postLikes = post.likes - 1
-      
-              post.update({
-                likes: postLikes
-              })
-      
-              return res.status(200).json({
-                error: false,
-                message: "Curtida removida com sucesso!",
-                postLikes,
-                userLikes
-              })
-      
-            } else {
-              return res.status(500).json({
-                error: true,
-                message: "Erro ao remover curtir da publicação!"
-              });
-            }
-          }).catch(err => {
-            return res.status(500).json({
-              error: true,
-              message: "Falha ao remover curtir da publicação: " + err
+      .then((user) => {
+        if (user) {
+          let userLikes = user.likes;
+          if (userLikes.some((list) => userLikes.includes(token))) {
+            //REMOVE USER LIKE
+            userLikes = userLikes.filter((postToken) => postToken !== token);
+            user.update({
+              likes: userLikes,
             });
-          })
+            //REMOVE POST LIKE
+            Posts.findOne({
+              where: { token },
+            })
+              .then((post) => {
+                if (post) {
+                  let postLikes = post.likes - 1;
 
+                  post.update({
+                    likes: postLikes,
+                  });
+
+                  return res.status(200).json({
+                    error: false,
+                    message: "Curtida removida com sucesso!",
+                    postLikes,
+                    userLikes,
+                  });
+                } else {
+                  return res.status(500).json({
+                    error: true,
+                    message: "Erro ao remover curtir da publicação!",
+                  });
+                }
+              })
+              .catch((err) => {
+                return res.status(500).json({
+                  error: true,
+                  message: "Falha ao remover curtir da publicação: " + err,
+                });
+              });
+          } else {
+            //ADD USER LIKE
+            userLikes =
+              user.likes.length === 0 ? [token] : [...user.likes, token];
+            user.update({
+              likes: userLikes,
+            });
+            //ADD POST LIKE
+            Posts.findOne({
+              where: { token },
+            })
+              .then((post) => {
+                if (post) {
+                  let postLikes = post.likes + 1;
+
+                  post.update({
+                    likes: postLikes,
+                  });
+
+                  return res.status(200).json({
+                    error: false,
+                    message: "Publicação curtida com sucesso!",
+                    postLikes,
+                    userLikes,
+                  });
+                } else {
+                  return res.status(500).json({
+                    error: true,
+                    message: "Erro ao curtir publicação!",
+                  });
+                }
+              })
+              .catch((err) => {
+                return res.status(500).json({
+                  error: true,
+                  message: "Falha ao encontrar publicação: " + err,
+                });
+              });
+          }
         } else {
-
-          //ADD USER LIKE
-          userLikes = (user.likes.length === 0)
-          ? [token]
-          : [...user.likes, token]
-          user.update({
-            likes: userLikes
-          })
-          //ADD POST LIKE
-          Posts.findOne({
-            where: { token },
-          }).then((post) => {
-            if(post){
-      
-              let postLikes = post.likes + 1
-      
-              post.update({
-                likes: postLikes
-              })
-      
-              return res.status(200).json({
-                error: false,
-                message: "Publicação curtida com sucesso!",
-                postLikes,
-                userLikes
-              })
-      
-            } else {
-              return res.status(500).json({
-                error: true,
-                message: "Erro ao curtir publicação!"
-              });
-            }
-          }).catch(err => {
-            return res.status(500).json({
-              error: true,
-              message: "Falha ao encontrar publicação: " + err
-            });
-          })
-          
+          return res.status(500).json({
+            error: true,
+            message: "Erro ao encontrar usuário!",
+          });
         }
-
-      } else {
+      })
+      .catch((err) => {
         return res.status(500).json({
           error: true,
-          message: "Erro ao encontrar usuário!"
+          message: "Falha ao encontrar usuário: " + err,
         });
-      }
-    }).catch(err => {
-      return res.status(500).json({
-        error: true,
-        message: "Falha ao encontrar usuário: " + err
       });
-    })
-
   },
 
-  async getComments(req, res){
+  async getComments(req, res) {
+    const { token } = req.params;
 
-    const { token } = req.params
-    
     if (!token || token == null || typeof token === undefined) {
       return res.status(400).json({
         error: true,
@@ -439,54 +439,52 @@ module.exports = {
     }
 
     Posts.findOne({
-      where: { token }
-    }).then((post) => {
-      if(post){
+      where: { token },
+    })
+      .then((post) => {
+        if (post) {
+          let postToken = post.token;
 
-        let postId = post.id
-
-        Comments.findAll({
-          where: { postId },
-          include: {
-            model: Users,
-            as: "user",
-            attributes: ['name', 'username', 'avatar']
-          }
-        }).then((comment) => {
-          if(comment){
-    
-            return res.status(200).json({
-              error: false,
-              message: "Comentários encontrados!",
-              comments: comment
+          Comments.findAll({
+            where: { postToken },
+            include: {
+              model: Users,
+              as: "user",
+              attributes: ["name", "username", "avatar"],
+            },
+          })
+            .then((comment) => {
+              if (comment) {
+                return res.status(200).json({
+                  error: false,
+                  message: "Comentários encontrados!",
+                  comments: comment,
+                });
+              } else {
+                return res.status(500).json({
+                  error: true,
+                  message: "Erro ao encontrar comentários",
+                });
+              }
             })
-    
-          } else {
-            return res.status(500).json({
-              error: true,
-              message: "Erro ao encontrar comentários"
-            })
-          }
-        }).catch((err) => {
+            .catch((err) => {
+              return res.status(500).json({
+                error: true,
+                message: "Falha ao encontrar comentários: " + err,
+              });
+            });
+        } else {
           return res.status(500).json({
             error: true,
-            message: "Falha ao encontrar comentários: "+err
-          })
-        })
-
-      } else {
+            message: "Erro ao encontrar publicação",
+          });
+        }
+      })
+      .catch((err) => {
         return res.status(500).json({
           error: true,
-          message: "Erro ao encontrar publicação"
-        })
-      }
-    }).catch((err) => {
-      return res.status(500).json({
-        error: true,
-        message: "Falha ao encontrar publicação: "+err
-      })
-    })
-
-  }
-
-}
+          message: "Falha ao encontrar publicação: " + err,
+        });
+      });
+  },
+};
