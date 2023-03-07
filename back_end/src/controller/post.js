@@ -320,6 +320,38 @@ module.exports = {
       });
   },
 
+  async updateComment(req, res) {
+    const { token, postToken } = req.params;
+    const uID = req.uID;
+
+    if (!token || token == null || typeof token === undefined) {
+      return res.status(400).json({
+        error: true,
+        message: "Token do comentário não pode ser vazio",
+        field: "token",
+      });
+    }
+
+    if (!postToken || postToken == null || typeof postToken === undefined) {
+      return res.status(400).json({
+        error: true,
+        message: "Token da publicação não pode ser vazio",
+        field: "postToken",
+      });
+    }
+
+    Posts.findOne({
+      where: { token: postToken },
+    })
+      .then((post) => {})
+      .catch((err) => {
+        return res.status(500).json({
+          error: true,
+          message: "Publicação não encontrada: " + err,
+        });
+      });
+  },
+
   async like(req, res) {
     const { token } = req.params;
     const uID = req.uID;
