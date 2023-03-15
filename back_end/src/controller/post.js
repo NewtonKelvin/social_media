@@ -322,6 +322,7 @@ module.exports = {
 
   async updateComment(req, res) {
     const { token, postToken } = req.params;
+    const { value } = req.body;
     const uID = req.uID;
 
     if (!token || token == null || typeof token === undefined) {
@@ -340,14 +341,107 @@ module.exports = {
       });
     }
 
+    if (!value || value == null || typeof value === undefined) {
+      return res.status(400).json({
+        error: true,
+        message: "Novo comentário não pode ser vazio",
+        field: "value",
+      });
+    }
+
     Posts.findOne({
       where: { token: postToken },
     })
-      .then((post) => {})
+      .then((post) => {
+        if (post) {
+          Comments.update(
+            {
+              value,
+            },
+            {
+              where: {
+                postToken,
+                token,
+                userId: uID,
+              },
+            }
+          )
+            .then((comments) => {
+              if (comments) {
+                Comments.findAll({
+                  include: {
+                    model: Users,
+                    as: "user",
+                    attributes: ["name", "username", "avatar"],
+                  },
+                })
+                  .then((comments) => {
+                    if (comments) {
+                      return res.status(200).json({
+                        error: false,
+                        message: "Comentário atualizado com sucesso!",
+                        comments,
+                      });
+                    } else {
+                      return res.status(500).json({
+                        error: true,
+                        message: "Publicação não encontrada",
+                      });
+                    }
+                  })
+                  .catch((err) => {
+                    return res.status(500).json({
+                      error: true,
+                      message: "Erro ao encontrar comentário: " + err,
+                    });
+                  });
+              } else {
+                return res.status(500).json({
+                  error: true,
+                  message: "Publicação não encontrada",
+                });
+              }
+            })
+            .catch((err) => {
+              return res.status(500).json({
+                error: true,
+                message: "Erro ao encontrar comentário: " + err,
+              });
+            });
+          /*Comments.findAll()
+            .then((comments) => {
+              if (comments) {
+
+                return res.status(200).json({
+                  error: false,
+                  message: "Comentário atualizado com sucesso!",
+                  comments,
+                });
+
+              } else {
+                return res.status(500).json({
+                  error: true,
+                  message: "Publicação não encontrada",
+                });
+              }
+            })
+            .catch((err) => {
+              return res.status(500).json({
+                error: true,
+                message: "Erro ao encontrar comentário: " + err,
+              });
+            });*/
+        } else {
+          return res.status(500).json({
+            error: true,
+            message: "Publicação não encontrada",
+          });
+        }
+      })
       .catch((err) => {
         return res.status(500).json({
           error: true,
-          message: "Publicação não encontrada: " + err,
+          message: "Erro ao encontrar publicação: " + err,
         });
       });
   },

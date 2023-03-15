@@ -1,6 +1,6 @@
 //Next React
 import Image from "next/image";
-import { useContext, useRef, useState } from "react";
+import { useContext, useState } from "react";
 import styled from "styled-components";
 import { useRouter } from "next/router";
 //React Bootstrap / Material UI
@@ -19,12 +19,28 @@ import * as moment from "moment";
 moment.locale("pt-br");
 import "moment/locale/pt-br";
 //Icons
-import { Comment, Delete, Favorite, ReplyAll, Send } from "@mui/icons-material";
+import {
+  Comment,
+  Delete,
+  Edit,
+  Favorite,
+  ReplyAll,
+  Send,
+} from "@mui/icons-material";
 //Utils
 import formatNumber from "../../../utils/formatNumber";
 import { useForm } from "react-hook-form";
 //API
 import { api } from "../../../services/api";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+} from "@mui/material";
 
 const CustomFeed = styled.div`
   div.row {
@@ -106,7 +122,7 @@ const CustomFeed = styled.div`
     grid-template-areas:
       "Photo Name Actions"
       "Photo Comment Comment";
-    grid-template-columns: 60px auto 40px;
+    grid-template-columns: 60px auto 60px;
     align-items: center;
     background-color: var(--input);
     border-radius: 10px;
@@ -168,13 +184,16 @@ const CustomFeed = styled.div`
       transition: color var(--transition);
     }
     .Actions {
-      margin: 0 10px;
+      margin: 0;
       grid-area: Actions;
       color: var(--opacity);
-      transition: color var(--transition);
       cursor: pointer;
-      &:hover {
+      svg {
+        margin: 0 5px;
+      }
+      & svg:hover {
         color: var(--red);
+        transition: color var(--transition);
       }
     }
   }
@@ -184,14 +203,40 @@ export default function Feed({ post, comments, uLikes }) {
   const router = useRouter();
   const { post: token } = router.query;
 
-  const { scrollToTop, scrollToBottom } = useContext(LayoutContext);
+  const { scrollToBottom } = useContext(LayoutContext);
 
   const { user } = useAuth();
 
   const [liked, setLiked] = useState(
     uLikes.some(() => uLikes.includes(token)) ? true : false
   );
+
   const [allComments, setAllComments] = useState(comments);
+
+  //Dialog anchor
+  const [newComment, setNewComment] = useState({
+    token: "",
+    postToken: token,
+    value: "",
+  });
+  const [confirmDialog, setConfirmDialog] = useState(false);
+  const [formDialog, setFormDialog] = useState(false);
+  const handleOpenConfirmDialog = (comment) => {
+    setNewComment(comment);
+    setConfirmDialog(true);
+  };
+
+  const handleCloseConfirmDialog = () => {
+    setConfirmDialog(false);
+  };
+  const handleOpenFormDialog = (comment) => {
+    setNewComment(comment);
+    setFormDialog(true);
+  };
+
+  const handleCloseFormDialog = () => {
+    setFormDialog(false);
+  };
 
   let errorMessage = "🤖🔧 Falha ao realizar ação, tente novamente mais tarde";
 
@@ -238,9 +283,9 @@ export default function Feed({ post, comments, uLikes }) {
       });
   };
 
-  const deleteComment = async (token) => {
+  const deleteComment = async () => {
     await api
-      .delete(`/deleteComment/${post.token}/${token}`)
+      .delete(`/deleteComment/${newComment.postToken}/${newComment.token}`)
       .then((response) => {
         setAllComments(response.data.comments);
 
@@ -253,6 +298,33 @@ export default function Feed({ post, comments, uLikes }) {
         handleAlertMessage(response.data.message || errorMessage);
         handleAlertOpen(true);
       });
+    handleCloseConfirmDialog();
+  };
+
+  const updateComment = async () => {
+    await api
+      .put(`/updateComment/${newComment.postToken}/${newComment.token}`, {
+        value: newComment.value,
+      })
+      .then((response) => {
+        setAllComments(response.data.comments);
+
+        handleAlertSeverity("success");
+        handleAlertMessage(response.data.message);
+        handleAlertOpen(true);
+      })
+      .catch(({ response }) => {
+        handleAlertSeverity("error");
+        handleAlertMessage(response.data.message || errorMessage);
+        handleAlertOpen(true);
+      });
+    handleCloseFormDialog();
+  };
+
+  const handleChange = (event) => {
+    setNewComment((prev) => {
+      return { ...prev, value: event.target.value };
+    });
   };
 
   return (
@@ -278,7 +350,7 @@ export default function Feed({ post, comments, uLikes }) {
                 </div>
                 <div className="Name">{user?.name}</div>
                 <div className="Username">
-                  @{user?.username} - {moment(post.createdAt).fromNow()}
+                  @{user?.username} - {moment(post.updatedAt).fromNow()}
                 </div>
               </div>
             </Col>
@@ -350,13 +422,17 @@ export default function Feed({ post, comments, uLikes }) {
                       {comment.user.name}
                       <span className="Username">
                         @{comment.user.username} -{" "}
-                        {moment(comment.createdAt).fromNow()}
+                        {moment(comment.updatedAt).fromNow()}
                       </span>
                     </div>
                     <div className="Actions">
                       <Delete
                         fontSize="small"
-                        onClick={() => deleteComment(comment.token)}
+                        onClick={() => handleOpenConfirmDialog(comment)}
+                      />
+                      <Edit
+                        fontSize="small"
+                        onClick={() => handleOpenFormDialog(comment)}
                       />
                     </div>
                     <div className="Comment">{comment.value}</div>
@@ -366,6 +442,55 @@ export default function Feed({ post, comments, uLikes }) {
             );
           })}
         </CustomFeed>
+        <Dialog
+          open={confirmDialog}
+          onClose={handleCloseConfirmDialog}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"🤔 Are you sure?"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Once you delete this comment you cannot go back. Right below it
+              click confirm to proceed or cancel to go back.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={deleteComment}>Confirm</Button>
+            <Button onClick={handleCloseConfirmDialog}>Cancel</Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog
+          open={formDialog}
+          onClose={handleCloseFormDialog}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle>🪶 Editar comentário</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Write something wrong? No problem, insert the new text below to
+              edit the comment.
+            </DialogContentText>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="comment"
+              label="Edit comment"
+              type="text"
+              fullWidth
+              variant="standard"
+              value={newComment?.value}
+              onChange={handleChange}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={updateComment}>Edit</Button>
+            <Button onClick={handleCloseFormDialog}>Cancel</Button>
+          </DialogActions>
+        </Dialog>
       </Layout>
     </>
   );
