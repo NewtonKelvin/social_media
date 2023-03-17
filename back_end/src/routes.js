@@ -44,6 +44,9 @@ routes.post(
 routes.post("/profile/update", verifyJWT, profileController.update);
 routes.get("/userLikes", verifyJWT, profileController.likes);
 
+routes.get("/profile/:profile", profileController.info);
+routes.get("/posts/:profile", profileController.posts);
+
 //Post
 routes.post(
   "/newPost",
@@ -55,7 +58,6 @@ routes.get("/post/:token", verifyJWT, postController.get);
 routes.put("/postLike/:token", verifyJWT, postController.like);
 
 routes.put("/postComment/", verifyJWT, postController.comment);
-routes.get("/postComments/:token", verifyJWT, postController.getComments);
 routes.put(
   "/updateComment/:postToken/:token",
   verifyJWT,

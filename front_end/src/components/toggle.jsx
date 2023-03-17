@@ -1,13 +1,13 @@
-import styled from "styled-components"
+import styled from "styled-components";
 //Material UI
-import ToggleButton from "@mui/material/ToggleButton"
-import ToggleButtonGroup from "@mui/material/ToggleButtonGroup"
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 
 const CustomToggle = styled.div`
   transition: background-color var(--transition);
   color: red !important;
   margin: 10px 0px;
-  @media (max-width: 1024px){
+  @media (max-width: 1024px) {
     button > span {
       display: none;
     }
@@ -25,10 +25,10 @@ const CustomToggle = styled.div`
     color: var(--text) !important;
   }
   button.MuiToggleButton-root {
-    padding: 5px!important;
-    font-family: 'Montserrat', sans-serif;
+    padding: 5px !important;
+    font-family: "Montserrat", sans-serif;
     color: var(--text);
-    border-radius: 10px!important;
+    border-radius: 10px !important;
     border: none;
     width: 100%;
     &[aria-pressed="true"] {
@@ -39,17 +39,21 @@ const CustomToggle = styled.div`
       }
     }
     span.MuiTouchRipple-root {
-      margin: 0px!important;
+      margin: 0px !important;
       color: var(--primary);
     }
     * {
       margin: 0px 5px;
     }
   }
-`
+`;
 
-export default function StyledToggle({ title, values, toggleValue, handleToggleValue }){
-
+export default function StyledToggle({
+  title,
+  values,
+  toggleValue,
+  handleToggleValue,
+}) {
   return (
     <CustomToggle>
       <ToggleButtonGroup
@@ -58,15 +62,15 @@ export default function StyledToggle({ title, values, toggleValue, handleToggleV
         aria-label={title}
         exclusive
       >
-        {values.map((item, key) => {
+        {values?.map((item, key) => {
           return (
             <ToggleButton key={key} value={item.value} aria-label={item.name}>
               {item.icon}
               <span>{item.name}</span>
             </ToggleButton>
-          )
+          );
         })}
       </ToggleButtonGroup>
     </CustomToggle>
-  )
+  );
 }

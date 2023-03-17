@@ -1,7 +1,7 @@
-import { createGlobalStyle } from 'styled-components'
+import { createGlobalStyle } from "styled-components";
 
-import backgroundLight from '../../public/images/background_light.jpg'
-import backgroundDark from '../../public/images/background_dark.jpg'
+import backgroundLight from "../../public/images/background_light.jpg";
+import backgroundDark from "../../public/images/background_dark.jpg";
 
 const GlobalStyle = createGlobalStyle`
 
@@ -92,7 +92,9 @@ const GlobalStyle = createGlobalStyle`
 
 
   /* OVERLAP */
-
+  p.MuiTypography-root {
+    font-family: 'Montserrat', sans-serif;
+  }
   div.MuiAlert-root {
     border-radius: 10px;
     font-weight: bold;
@@ -213,5 +215,5 @@ const GlobalStyle = createGlobalStyle`
     background: var(--primary);
   }
 `;
- 
-export default GlobalStyle
+
+export default GlobalStyle;

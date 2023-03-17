@@ -7,15 +7,16 @@ const Posts = db.sequelize.define("posts", {
     type: db.Sequelize.INTEGER,
     autoIncrement: true,
     allowNull: false,
-    primaryKey: true,
   },
   token: {
     type: db.Sequelize.STRING,
     allowNull: false,
+    primaryKey: true,
   },
   userId: {
     type: db.Sequelize.INTEGER,
     allowNull: false,
+    foreignKey: true,
     references: {
       model: Users,
       key: "id",
@@ -45,17 +46,6 @@ const Posts = db.sequelize.define("posts", {
     allowNull: false,
     defaultValue: 0,
   },
-  /*comments: {
-    type: db.Sequelize.TEXT('long'),
-    defaultValue: '[]',
-    allowNull: false,
-    get: function () {
-      return JSON.parse(this.getDataValue('comments'));
-    },
-    set: function (value) {
-      this.setDataValue('comments', JSON.stringify(value));
-    }
-  },*/
   shares: {
     type: db.Sequelize.INTEGER,
     allowNull: false,
@@ -75,9 +65,8 @@ const Posts = db.sequelize.define("posts", {
   },
 });
 
-Posts.hasMany(Comments, {
-  foreignKey: "token",
-});
+Posts.hasMany(Comments);
+Comments.belongsTo(Posts);
 
 Posts.belongsTo(Users);
 

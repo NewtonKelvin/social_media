@@ -136,7 +136,12 @@ module.exports = {
         {
           model: Comments,
           as: "comments",
-          attributes: ["userId", "value"],
+          attributes: ["userId", "value", "token", "postToken", "updatedAt"],
+          include: {
+            model: Users,
+            as: "user",
+            attributes: ["name", "username", "avatar"],
+          },
         },
       ],
     })
@@ -369,6 +374,7 @@ module.exports = {
             .then((comments) => {
               if (comments) {
                 Comments.findAll({
+                  attributes: ["token", "postToken", "updatedAt", "value"],
                   include: {
                     model: Users,
                     as: "user",
@@ -549,67 +555,6 @@ module.exports = {
         return res.status(500).json({
           error: true,
           message: "Falha ao encontrar usuário: " + err,
-        });
-      });
-  },
-
-  async getComments(req, res) {
-    const { token } = req.params;
-
-    if (!token || token == null || typeof token === undefined) {
-      return res.status(400).json({
-        error: true,
-        message: "Token da publicação não pode ser vazio",
-        field: "token",
-      });
-    }
-
-    Posts.findOne({
-      where: { token },
-    })
-      .then((post) => {
-        if (post) {
-          let postToken = post.token;
-
-          Comments.findAll({
-            where: { postToken },
-            include: {
-              model: Users,
-              as: "user",
-              attributes: ["name", "username", "avatar"],
-            },
-          })
-            .then((comment) => {
-              if (comment) {
-                return res.status(200).json({
-                  error: false,
-                  message: "Comentários encontrados!",
-                  comments: comment,
-                });
-              } else {
-                return res.status(500).json({
-                  error: true,
-                  message: "Erro ao encontrar comentários",
-                });
-              }
-            })
-            .catch((err) => {
-              return res.status(500).json({
-                error: true,
-                message: "Falha ao encontrar comentários: " + err,
-              });
-            });
-        } else {
-          return res.status(500).json({
-            error: true,
-            message: "Erro ao encontrar publicação",
-          });
-        }
-      })
-      .catch((err) => {
-        return res.status(500).json({
-          error: true,
-          message: "Falha ao encontrar publicação: " + err,
         });
       });
   },

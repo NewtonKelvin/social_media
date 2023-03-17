@@ -7,15 +7,16 @@ const Comments = db.sequelize.define("comments", {
     type: db.Sequelize.INTEGER,
     autoIncrement: true,
     allowNull: false,
-    primaryKey: true,
   },
   token: {
     type: db.Sequelize.STRING,
     allowNull: false,
+    primaryKey: true,
   },
   postToken: {
     type: db.Sequelize.STRING,
     allowNull: false,
+    foreignKey: true,
     references: {
       model: Posts,
       key: "token",
@@ -24,6 +25,7 @@ const Comments = db.sequelize.define("comments", {
   userId: {
     type: db.Sequelize.INTEGER,
     allowNull: false,
+    foreignKey: true,
     references: {
       model: Users,
       key: "id",
@@ -52,9 +54,7 @@ const Comments = db.sequelize.define("comments", {
   },
 });
 
-Comments.belongsTo(Users, {
-  foreignKey: "userId",
-});
+Comments.belongsTo(Users);
 
 module.exports = Comments;
 
