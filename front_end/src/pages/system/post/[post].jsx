@@ -24,6 +24,7 @@ export default function Feed({ post, uLikes }) {
     <>
       <Layout title={`${post.user.name}'s post`}>
         <Post
+          size="extended"
           profile={post.user}
           post={post}
           liked={likeList.some(() => likeList.includes(token)) ? true : false}

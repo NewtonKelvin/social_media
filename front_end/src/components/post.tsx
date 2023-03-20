@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Col, Row } from "react-bootstrap";
 import StyledCarousel from "./carousel";
 import Image from "next/image";
 import StyledButton from "./button";
@@ -28,6 +27,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Grid,
   TextField,
 } from "@mui/material";
 
@@ -189,13 +189,20 @@ const CustomFeed = styled.div`
 `;
 
 export interface PostType {
+  size: "extended" | "short";
   profile: User;
   post: Post;
   liked: boolean;
   setLikeList: (likeList: string[]) => void;
 }
 
-const PostComponent = ({ profile, post, liked, setLikeList }: PostType) => {
+const PostComponent = ({
+  size,
+  profile,
+  post,
+  liked,
+  setLikeList,
+}: PostType) => {
   //Dialog anchor
   const [newComment, setNewComment] = useState({
     token: "",
@@ -325,13 +332,12 @@ const PostComponent = ({ profile, post, liked, setLikeList }: PostType) => {
   return (
     <>
       <CustomFeed>
-        <Row>
-          <Col>
+        <Grid container gap={1}>
+          <Grid md={12} xs={12}>
             <StyledCarousel unoptimized={false} slideList={post?.files} />
-          </Col>
-        </Row>
-        <Row>
-          <Col lg={{ span: 12, offset: 0 }}>
+          </Grid>
+
+          <Grid md={12} xs={12}>
             <div className="Profile">
               <div className="Photo">
                 <Image
@@ -348,41 +354,47 @@ const PostComponent = ({ profile, post, liked, setLikeList }: PostType) => {
                 @{profile?.username} - {moment(post?.updatedAt).fromNow()}
               </div>
             </div>
-          </Col>
-        </Row>
-        <Row>
-          <Col className="Description">{post.description}</Col>
-        </Row>
-        <Row>
-          <Col md={3} className="Numbers">
-            <StyledButton className={liked ? "primary" : "opacity"} square>
-              <button onClick={() => onLike()}>
-                <Favorite />
-              </button>
-            </StyledButton>
-            {formatNumber(post.likes)} {post.likes == 1 ? "Like" : "Likes"}
-          </Col>
-          <Col md={3} className="Numbers">
-            <StyledButton className="opacity" square>
-              <button>
-                <Comment />
-              </button>
-            </StyledButton>
-            {formatNumber(allComments?.length)}{" "}
-            {allComments?.length == 1 ? "Comment" : "Comments"}
-          </Col>
-          <Col md={3} className="Numbers">
-            <StyledButton className="opacity" square>
-              <button>
-                <ReplyAll />
-              </button>
-            </StyledButton>
-            {formatNumber(post.shares)} {post.shares == 1 ? "Share" : "Shares"}
-          </Col>
-        </Row>
+          </Grid>
 
-        <Row>
-          <Col md={12}>
+          <Grid md={12} xs={12} className="Description">
+            {post.description}
+          </Grid>
+
+          <Grid
+            container
+            direction="row"
+            justifyContent="flex-start"
+            alignItems="center"
+          >
+            <Grid xl={2} md={4} sm={12} xs={12} className="Numbers">
+              <StyledButton className={liked ? "primary" : "opacity"} square>
+                <button onClick={() => onLike()}>
+                  <Favorite />
+                </button>
+              </StyledButton>
+              {formatNumber(post.likes)} {post.likes == 1 ? "Like" : "Likes"}
+            </Grid>
+            <Grid xl={2} md={4} sm={12} xs={12} className="Numbers">
+              <StyledButton className="opacity" square>
+                <button>
+                  <Comment />
+                </button>
+              </StyledButton>
+              {formatNumber(allComments?.length)}{" "}
+              {allComments?.length == 1 ? "Comment" : "Comments"}
+            </Grid>
+            <Grid xl={2} md={4} sm={12} xs={12} className="Numbers">
+              <StyledButton className="opacity" square>
+                <button>
+                  <ReplyAll />
+                </button>
+              </StyledButton>
+              {formatNumber(post.shares)}{" "}
+              {post.shares == 1 ? "Share" : "Shares"}
+            </Grid>
+          </Grid>
+
+          <Grid md={12} xs={12}>
             <StyledInput>
               <form onSubmit={handleSubmitComment(onSubmit)}>
                 <label htmlFor="">Deixe um comentário:</label>
@@ -397,45 +409,110 @@ const PostComponent = ({ profile, post, liked, setLikeList }: PostType) => {
                 </button>
               </form>
             </StyledInput>
-          </Col>
-        </Row>
-        {allComments?.map((comment, index) => {
-          return (
-            <Row key={index}>
-              <Col md={12}>
-                <div className="Comments">
-                  <div className="Photo">
-                    <Image
-                      src={`${process.env.BACK_END}/image/${comment.user.avatar}`}
-                      layout="intrinsic"
-                      height={80}
-                      width={80}
-                      className="WithBackground"
+          </Grid>
+          <Grid md={12} xs={12}>
+            {allComments?.map((comment, index) => {
+              return (
+                <Grid container key={index} marginY={1}>
+                  <Grid md={12}>
+                    <div className="Comments">
+                      <div className="Photo">
+                        <Image
+                          src={`${process.env.BACK_END}/image/${comment.user.avatar}`}
+                          layout="intrinsic"
+                          height={80}
+                          width={80}
+                          className="WithBackground"
+                        />
+                      </div>
+                      <div className="Name">
+                        {comment.user.name}
+                        <span className="Username">
+                          @{comment.user.username} -{" "}
+                          {moment(comment.updatedAt).fromNow()}
+                        </span>
+                      </div>
+                      <div className="Actions">
+                        <Delete
+                          fontSize="small"
+                          onClick={() => handleOpenConfirmDialog(comment)}
+                        />
+                        <Edit
+                          fontSize="small"
+                          onClick={() => handleOpenFormDialog(comment)}
+                        />
+                      </div>
+                      <div className="Comment">{comment.value}</div>
+                    </div>
+                  </Grid>
+                </Grid>
+              );
+            })}
+          </Grid>
+
+          {/* <Grid md={size === "extended" ? 12 : 4}>
+            <Grid container>
+              
+            </Grid>
+
+            <Grid container>
+              <Grid md={12}>
+                <StyledInput>
+                  <form onSubmit={handleSubmitComment(onSubmit)}>
+                    <label htmlFor="">Deixe um comentário:</label>
+                    <Comment fontSize="small" />
+                    <input
+                      type="text"
+                      placeholder="Insert a comment..."
+                      {...registerComment("comment")}
                     />
-                  </div>
-                  <div className="Name">
-                    {comment.user.name}
-                    <span className="Username">
-                      @{comment.user.username} -{" "}
-                      {moment(comment.updatedAt).fromNow()}
-                    </span>
-                  </div>
-                  <div className="Actions">
-                    <Delete
-                      fontSize="small"
-                      onClick={() => handleOpenConfirmDialog(comment)}
-                    />
-                    <Edit
-                      fontSize="small"
-                      onClick={() => handleOpenFormDialog(comment)}
-                    />
-                  </div>
-                  <div className="Comment">{comment.value}</div>
-                </div>
-              </Col>
-            </Row>
-          );
-        })}
+                    <button type="submit">
+                      <Send fontSize="small" />
+                    </button>
+                  </form>
+                </StyledInput>
+              </Grid>
+            </Grid>
+            {allComments?.map((comment, index) => {
+              return (
+                <Grid container key={index}>
+                  <Grid md={12}>
+                    <div className="Comments">
+                      <div className="Photo">
+                        <Image
+                          src={`${process.env.BACK_END}/image/${comment.user.avatar}`}
+                          layout="intrinsic"
+                          height={80}
+                          width={80}
+                          className="WithBackground"
+                        />
+                      </div>
+                      <div className="Name">
+                        {comment.user.name}
+                        <span className="Username">
+                          @{comment.user.username} -{" "}
+                          {moment(comment.updatedAt).fromNow()}
+                        </span>
+                      </div>
+                      <div className="Actions">
+                        <Delete
+                          fontSize="small"
+                          onClick={() => handleOpenConfirmDialog(comment)}
+                        />
+                        <Edit
+                          fontSize="small"
+                          onClick={() => handleOpenFormDialog(comment)}
+                        />
+                      </div>
+                      <div className="Comment">{comment.value}</div>
+                    </div>
+                  </Grid>
+                </Grid>
+              );
+            })}
+          </Grid> */}
+        </Grid>
+
         <Dialog
           open={confirmDialog}
           onClose={handleCloseConfirmDialog}

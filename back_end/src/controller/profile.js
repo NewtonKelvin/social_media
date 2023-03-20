@@ -230,6 +230,7 @@ module.exports = {
               "files",
               "likes",
               "shares",
+              "updatedAt",
             ],
             include: [
               {
@@ -252,7 +253,6 @@ module.exports = {
                 limit: 5,
               },
             ],
-            limit: 5,
           })
             .then((posts) => {
               if (posts) {

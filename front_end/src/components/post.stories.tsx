@@ -7,10 +7,16 @@ import Post, { PostType } from "./post";
 export default {
   title: "Components/Post",
   component: Post,
+  argTypes: {
+    size: {
+      options: ["extended", "short"],
+      control: { type: "select" },
+    },
+  },
 };
 
 //👇 We create a “template” of how args map to rendering
-const Template = ({ post, profile }: PostType) => {
+const Template = ({ size, post, profile }: PostType) => {
   const [likeList, setLikeList] = useState([""]);
   const liked = likeList.some(() => likeList.includes(post.token))
     ? true
@@ -22,6 +28,7 @@ const Template = ({ post, profile }: PostType) => {
 
   return (
     <Post
+      size={size}
       profile={profile}
       liked={liked}
       setLikeList={() => handleLikeList([post.token])}
@@ -32,6 +39,7 @@ const Template = ({ post, profile }: PostType) => {
 
 export const Default = Template.bind({});
 Default.args = {
+  size: "extended",
   post: {
     files: [
       "post/b8b282c29afdae6a3f2f/44ee3c371da96cec3a77",

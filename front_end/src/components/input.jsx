@@ -1,7 +1,7 @@
-import styled from "styled-components"
+import styled from "styled-components";
 
 const CustomInput = styled.div`
-
+  position: relative;
   img {
     max-width: 40px !important;
     max-height: 40px !important;
@@ -15,11 +15,12 @@ const CustomInput = styled.div`
     margin: 0 16px !important;
   }
 
-  svg, img {
+  svg,
+  img {
     color: var(--opacity);
     height: 2.5rem;
     position: absolute;
-    margin: 0 .5rem;
+    margin: 0 0.5rem;
   }
 
   button {
@@ -61,7 +62,7 @@ const CustomInput = styled.div`
     border-bottom: 1px solid transparent;
     transition: all var(--transition);
 
-    padding-left: ${props => (!props.withIcon) ? ".8rem" : "2.5rem"};
+    padding-left: ${(props) => (!props.withIcon ? ".8rem" : "2.5rem")};
   }
 
   input:-webkit-autofill,
@@ -76,7 +77,6 @@ const CustomInput = styled.div`
   select:-webkit-autofill:hover,
   select:-webkit-autofill:active,
   select:-webkit-autofill:focus {
-
     /*
     border: 0px solid var(--text);
     background-clip: text;
@@ -89,25 +89,20 @@ const CustomInput = styled.div`
     transition: background-color 9999s ease-in-out 0s;
     caret-color: var(--text);
     -webkit-text-fill-color: var(--text);
-
   }
 
   input:focus {
     border-bottom: 1px solid var(--blue);
   }
 
-  input[aria-invalid='true'] {
+  input[aria-invalid="true"] {
     border-bottom: 1px solid var(--red);
   }
-  input[aria-valid='true'] {
+  input[aria-valid="true"] {
     border-bottom: 1px solid var(--green);
   }
 `;
 
 export default function StyledInput({ children, withIcon = true }) {
-  return (
-    <CustomInput withIcon={withIcon}>
-      {children}
-    </CustomInput>
-  );
+  return <CustomInput withIcon={withIcon}>{children}</CustomInput>;
 }

@@ -30,20 +30,16 @@ const CustomCarousel = styled.div`
     border-radius: 10px;
     object-fit: cover !important;
     object-position: 50% 50%;
-  }
-  @media (max-width: 1280px) {
-    img {
+    @media (max-width: 1280px) {
       width: 300px !important;
       height: 300px !important;
     }
-  }
-  @media (max-width: 900px) {
-    img {
-      width: 200px !important;
-      height: 200px !important;
+    @media (max-width: 900px) {
+      /* width: 200px !important; */
+      /* height: 200px !important; */
 
-      min-width: 200px !important;
-      min-height: 200px !important;
+      min-width: 300px !important;
+      min-height: 300px !important;
     }
   }
   @media (max-width: 410px) {
@@ -57,7 +53,7 @@ const CustomCarousel = styled.div`
     height: 40px;
     display: flex;
     justify-content: space-between;
-    z-index: 1;
+    z-index: 2;
 
     margin: 0 auto;
     position: relative;
@@ -74,6 +70,9 @@ const CustomCarousel = styled.div`
       display: flex;
       justify-content: center;
       align-items: center;
+    }
+    @media (max-width: 1000px) {
+      display: none;
     }
   }
   .Dots {
@@ -95,7 +94,7 @@ const CustomCarousel = styled.div`
 
       transition: background-color var(--transition);
       background-color: var(--container);
-      &[is-selected="true"] {
+      &[aria-selected="true"] {
         background-color: var(--primary);
       }
     }
@@ -140,7 +139,7 @@ export default function StyledCarousel({ slideList, unoptimized }) {
     myDotList.push(
       <span
         key={index}
-        is-selected={currentSlide == index ? "true" : "false"}
+        aria-selected={currentSlide == index ? "true" : "false"}
         onClick={() => setCurrentSlide(index)}
       />
     );

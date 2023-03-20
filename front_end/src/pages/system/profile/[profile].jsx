@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { Box, Grid, Tab, Tabs, Typography } from "@mui/material";
 import { useState } from "react";
 
-import Post from "../../../components/post";
+import ImageGrid from "../../../components/imageGrid";
 
 const CoverImage = styled(Image)`
   border-radius: 10px;
@@ -111,9 +111,7 @@ function TabPanel(props) {
   );
 }
 
-export default function Profile({ profile, posts, uLikes }) {
-  const [likeList, setLikeList] = useState(uLikes);
-
+export default function Profile({ profile, posts }) {
   const [tabs, setTabs] = useState(0);
 
   function a11yProps(index) {
@@ -179,7 +177,7 @@ export default function Profile({ profile, posts, uLikes }) {
           </ProfileData>
         </Grid>
 
-        <Grid md={12}>
+        <Grid xs={12}>
           <CustomTabs>
             <Tabs
               value={tabs}
@@ -195,25 +193,7 @@ export default function Profile({ profile, posts, uLikes }) {
             </Tabs>
           </CustomTabs>
           <TabPanel value={tabs} index={0}>
-            {posts.map((post, index) => {
-              return (
-                <>
-                  {post && profile && (
-                    <Post
-                      key={index}
-                      profile={profile}
-                      post={post}
-                      liked={
-                        likeList.some(() => likeList.includes(post.token))
-                          ? true
-                          : false
-                      }
-                      setLikeList={setLikeList}
-                    />
-                  )}
-                </>
-              );
-            })}
+            <ImageGrid postList={posts} />
           </TabPanel>
           <TabPanel value={tabs} index={1}>
             Tagged
@@ -240,7 +220,6 @@ export const getServerSideProps = async (ctx) => {
 
   let profile = null;
   let posts = null;
-  let uLikes = null;
 
   const apiClient = getAPIClient(ctx);
 
@@ -269,21 +248,9 @@ export const getServerSideProps = async (ctx) => {
       ctx.res.end();
       return { props: {} };
     });
-  //Pega os likes do usuário
-  await apiClient
-    .get("/userLikes")
-    .then(async ({ data }) => {
-      uLikes = data.likes;
-    })
-    .catch(() => {
-      ctx.res.statusCode = 302;
-      ctx.res.setHeader("Location", "/feed");
-      ctx.res.end();
-      return { props: {} };
-    });
 
   // Pass data to the page via props
   return {
-    props: { profile, posts, uLikes },
+    props: { profile, posts },
   };
 };
