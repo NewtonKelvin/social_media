@@ -100,6 +100,14 @@ const GlobalStyle = createGlobalStyle`
     font-weight: bold;
   }
 
+  div.MuiDialog-paper {
+    background-color: var(--container);
+    color: var(--text)
+  }
+  div.MuiDialogContent-dividers {
+    border: none;
+  }
+
   div.modal-content {
 
     background-color: var(--container);
@@ -127,7 +135,7 @@ const GlobalStyle = createGlobalStyle`
     /* width: 100%; */
     color: var(--text);
     background-color: var(--input);
-    margin: 10px;
+    margin: 10px 0;
     resize: none;
     padding: 10px !important;
 

@@ -1,8 +1,8 @@
-import styled from "styled-components"
+import styled from "styled-components";
 
 const CustomButton = styled.div`
   margin: 10px 0;
-  width: ${props => props.square ? "38px" : "auto"};
+  width: ${(props) => (props.square ? "38px" : "auto")};
 
   &.transparent {
     button {
@@ -23,8 +23,8 @@ const CustomButton = styled.div`
 
     display: flex;
     align-items: center;
-    justify-content: ${props => props.alignLeft ? "flex-start" : "center"};
-    width: ${props => props.square ? "38px" : "100%"};
+    justify-content: ${(props) => (props.alignLeft ? "flex-start" : "center")};
+    width: ${(props) => (props.square ? "38px" : "100%")};
     height: 38px;
     font-weight: bold;
     transition: all var(--transition);
@@ -44,16 +44,12 @@ const CustomButton = styled.div`
       height: 70%;
     }
   }
-`
+`;
 
-export default function StyledButton(props){
+export default function StyledButton(props) {
   return (
-    <CustomButton
-      alignLeft={props.alignLeft}
-      square={props.square}
-      {...props}
-    >
+    <CustomButton alignLeft={props.alignLeft} square={props.square} {...props}>
       {props.children}
     </CustomButton>
-  )
+  );
 }

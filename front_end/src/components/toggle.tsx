@@ -2,6 +2,7 @@ import styled from "styled-components";
 //Material UI
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import { ReactElement } from "react";
 
 const CustomToggle = styled.div`
   transition: background-color var(--transition);
@@ -48,12 +49,25 @@ const CustomToggle = styled.div`
   }
 `;
 
+export interface ToggleValueType {
+  name: string;
+  icon: ReactElement;
+  value: string;
+}
+
+export interface ToggleType {
+  title: string;
+  values: ToggleValueType[];
+  toggleValue: string;
+  handleToggleValue: (value: string) => void;
+}
+
 export default function StyledToggle({
   title,
   values,
   toggleValue,
   handleToggleValue,
-}) {
+}: ToggleType) {
   return (
     <CustomToggle>
       <ToggleButtonGroup

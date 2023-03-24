@@ -449,68 +449,6 @@ const PostComponent = ({
               );
             })}
           </Grid>
-
-          {/* <Grid md={size === "extended" ? 12 : 4}>
-            <Grid container>
-              
-            </Grid>
-
-            <Grid container>
-              <Grid md={12}>
-                <StyledInput>
-                  <form onSubmit={handleSubmitComment(onSubmit)}>
-                    <label htmlFor="">Deixe um comentário:</label>
-                    <Comment fontSize="small" />
-                    <input
-                      type="text"
-                      placeholder="Insert a comment..."
-                      {...registerComment("comment")}
-                    />
-                    <button type="submit">
-                      <Send fontSize="small" />
-                    </button>
-                  </form>
-                </StyledInput>
-              </Grid>
-            </Grid>
-            {allComments?.map((comment, index) => {
-              return (
-                <Grid container key={index}>
-                  <Grid md={12}>
-                    <div className="Comments">
-                      <div className="Photo">
-                        <Image
-                          src={`${process.env.BACK_END}/image/${comment.user.avatar}`}
-                          layout="intrinsic"
-                          height={80}
-                          width={80}
-                          className="WithBackground"
-                        />
-                      </div>
-                      <div className="Name">
-                        {comment.user.name}
-                        <span className="Username">
-                          @{comment.user.username} -{" "}
-                          {moment(comment.updatedAt).fromNow()}
-                        </span>
-                      </div>
-                      <div className="Actions">
-                        <Delete
-                          fontSize="small"
-                          onClick={() => handleOpenConfirmDialog(comment)}
-                        />
-                        <Edit
-                          fontSize="small"
-                          onClick={() => handleOpenFormDialog(comment)}
-                        />
-                      </div>
-                      <div className="Comment">{comment.value}</div>
-                    </div>
-                  </Grid>
-                </Grid>
-              );
-            })}
-          </Grid> */}
         </Grid>
 
         <Dialog

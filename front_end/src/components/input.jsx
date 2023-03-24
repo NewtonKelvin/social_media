@@ -2,6 +2,7 @@ import styled from "styled-components";
 
 const CustomInput = styled.div`
   position: relative;
+  padding-right: 5px;
   img {
     max-width: 40px !important;
     max-height: 40px !important;
@@ -98,7 +99,7 @@ const CustomInput = styled.div`
   input[aria-invalid="true"] {
     border-bottom: 1px solid var(--red);
   }
-  input[aria-valid="true"] {
+  input[aria-checked="true"] {
     border-bottom: 1px solid var(--green);
   }
 `;

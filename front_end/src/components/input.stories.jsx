@@ -1,7 +1,7 @@
 // YourComponent.stories.js|jsx
 import StyledInput from "./input";
 //Icons
-import { AccountCircle, Send } from "@mui/icons-material"
+import { AccountCircle, Send } from "@mui/icons-material";
 
 //👇 This default export determines where your story goes in the story list
 export default {
@@ -9,28 +9,37 @@ export default {
   component: StyledInput,
   argTypes: {
     type: {
-      options: ['text', 'password', 'email', 'number'],
-      control: { type: 'select' },
+      options: ["text", "password", "email", "number"],
+      control: { type: "select" },
     },
   },
 };
 
 //👇 We create a “template” of how args map to rendering
-const Template = ({ label, labelText, withIcon, withButton, type, placeholder, ariaInvalid, ariaValid }) => (
+const Template = ({
+  label,
+  labelText,
+  withIcon,
+  withButton,
+  type,
+  placeholder,
+  ariaInvalid,
+  ariaChecked,
+}) => (
   <StyledInput withIcon={withIcon}>
-    {(label) && <label>{labelText}</label>}
-    {(withIcon) && <AccountCircle />}
+    {label && <label>{labelText}</label>}
+    {withIcon && <AccountCircle />}
     <input
       type={type}
       placeholder={placeholder}
       aria-invalid={ariaInvalid}
-      aria-valid={ariaValid}
-      />
-    {(withButton) &&
+      aria-checked={ariaChecked}
+    />
+    {withButton && (
       <button type="submit">
         <Send fontSize="small" />
       </button>
-    }
+    )}
   </StyledInput>
 );
 
@@ -43,5 +52,5 @@ Default.args = {
   type: "text",
   placeholder: "Insert your username...",
   ariaInvalid: false,
-  ariaValid: false,
+  ariaChecked: false,
 };

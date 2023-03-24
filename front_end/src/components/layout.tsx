@@ -5,11 +5,30 @@ import { createContext, useRef, useState } from "react";
 //Context
 import Navbar from "./navbar";
 import Sidebar from "./sidebar";
-//React bootstrap
-import { Col, Container, Row } from "react-bootstrap";
+import { Grid } from "@mui/material";
+import PostForm from "./postForm";
+
+export const PageInfo = styled(Grid)`
+  margin: 20px 0px;
+  div.PageInfo {
+    margin-bottom: 30px;
+  }
+  div.Title {
+    padding-left: 23px;
+    font-weight: bold;
+    font-size: 2.4rem;
+    text-transform: uppercase;
+  }
+  div.Description {
+    font-weight: normal;
+    font-size: 1.2rem;
+    padding-left: 20px;
+    border-left: 3px solid var(--primary);
+  }
+`;
 
 const MyLayout = styled.div`
-  @media (max-width: 768px) {
+  @media (max-width: 899px) {
     .Sidebar[aria-expanded="true"] + .Content {
       opacity: 0.5;
     }
@@ -18,7 +37,7 @@ const MyLayout = styled.div`
         margin: 0;
       }
       margin-left: -100vw;
-      width: calc(80vw - (var(--page-padding) * 2));
+      max-width: calc(80vw - (var(--page-padding) * 2));
       display: block;
       z-index: 2;
     }
@@ -71,25 +90,6 @@ const MyLayout = styled.div`
   }
 `;
 
-export const PageInfo = styled(Row)`
-  margin: 20px 0px;
-  div.PageInfo {
-    margin-bottom: 30px;
-  }
-  div.Title {
-    padding-left: 23px;
-    font-weight: bold;
-    font-size: 2.4rem;
-    text-transform: uppercase;
-  }
-  div.Description {
-    font-weight: normal;
-    font-size: 1.2rem;
-    padding-left: 20px;
-    border-left: 3px solid var(--primary);
-  }
-`;
-
 interface LayoutType {
   /** Conteúdo da página com elemenos JSX */
   children: JSX.Element | JSX.Element[];
@@ -122,6 +122,15 @@ export default function Layout({
   const [sideOpen, setSideOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(title);
 
+  const [formOpen, setFormOpen] = useState(false);
+
+  const handleFormOpen = () => {
+    setFormOpen(true);
+  };
+  const handleFormClose = () => {
+    setFormOpen(false);
+  };
+
   return (
     <MyLayout>
       <Head>
@@ -137,32 +146,48 @@ export default function Layout({
         }}
       >
         <div className="Navbar">
-          <Navbar />
+          <Navbar handleFormOpen={handleFormOpen} />
         </div>
 
         <div className="Sidebar" aria-expanded={sideOpen}>
-          <Sidebar />
+          <Sidebar handleFormOpen={handleFormOpen} />
         </div>
 
         <div className="Content">
           <div ref={topRef} />
-          <Container>
-            <Row className="Breadcrumbs">
-              <Col>{breadcrumbs}</Col>
-            </Row>
-            {title !== "Profile" && (
-              <PageInfo>
-                <Col md={6}>
-                  <div className="Title">{title}</div>
-                  <div className="Description">{description}</div>
-                </Col>
-              </PageInfo>
-            )}
-            {children}
-          </Container>
+
+          <Grid
+            container
+            justifyContent="center"
+            alignItems="center"
+            style={{
+              filter: "grayscale(0) blur(0)",
+            }}
+          >
+            <Grid item xl={10} xs={12}>
+              <Grid container>
+                <Grid item md={12} className="Breadcrumbs">
+                  <Grid>{breadcrumbs}</Grid>
+                </Grid>
+                {title !== "Profile" && (
+                  <PageInfo item md={12}>
+                    <div className="Title">{title}</div>
+                    <div className="Description">{description}</div>
+                  </PageInfo>
+                )}
+                <Grid md={12} item>
+                  {children}
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
           <div ref={bottomRef} />
-          {/* <hr /> */}
         </div>
+        <PostForm
+          formOpen={formOpen}
+          handleFormOpen={() => handleFormOpen()}
+          handleFormClose={() => handleFormClose()}
+        />
       </LayoutContext.Provider>
     </MyLayout>
   );

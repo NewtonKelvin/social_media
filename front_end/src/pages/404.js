@@ -1,27 +1,34 @@
 //Next and React
-import { useContext, useState } from "react"
-import Head from "next/head"
-import Link from "next/link"
-import { useRouter } from "next/router"
-import Image from "next/image"
+import { useContext, useState } from "react";
+import Head from "next/head";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import Image from "next/image";
 //API
-import { ThemeContext } from "./_app"
+import { ThemeContext } from "./_app";
 //Packages
-import { Col, Row } from "react-bootstrap"
+import { Col, Row } from "react-bootstrap";
 //Style
-import StyledContainerL2, { StyledContainerL, StyledContainerR } from "../styles/login"
+import StyledContainerL2, {
+  StyledContainerL,
+  StyledContainerR,
+} from "../styles/login";
 //Components
-import StyledSwitch from "../components/switch"
+import StyledSwitch from "../components/switch";
 //Icons
-import { AccountCircle, Fingerprint, Brightness3, WbSunny } from "@mui/icons-material"
+import {
+  AccountCircle,
+  Fingerprint,
+  Brightness3,
+  WbSunny,
+} from "@mui/icons-material";
 //Image
-import TimeTraveler from '../../public/images/time-traveler.svg'
+import TimeTraveler from "../../public/images/time-traveler.svg";
 
 export default function Login() {
+  const { theme, toggleTheme, isDark } = useContext(ThemeContext);
 
-  const { theme, toggleTheme, isDark } = useContext(ThemeContext)
-  
-  const router = useRouter()
+  const router = useRouter();
 
   return (
     <>
@@ -33,22 +40,26 @@ export default function Login() {
         <Col xl={6} style={{ padding: "0" }}>
           <StyledContainerL2 isDark={isDark}>
             <Row>
-
-              <Col>
-              </Col>
+              <Col></Col>
 
               <Col
                 md={{ span: 6, offset: 3 }}
-                style={{ display: "flex", flexDirection: "column", textAlign: "center" }}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  textAlign: "center",
+                }}
               >
                 <h1>🤔🕰️</h1>
-                <h1 style={{ fontWeight: "bold", textTransform: "uppercase" }}>It looks like you are a time traveler</h1>
+                <h1 style={{ fontWeight: "bold", textTransform: "uppercase" }}>
+                  It looks like you are a time traveler
+                </h1>
                 <hr />
                 <h2>This page was not found</h2>
               </Col>
 
               <Col style={{ display: "flex", alignItems: "end" }}>
-                <Link href="/">Back to home page</Link>
+                <Link href="/home">Back to home page</Link>
               </Col>
             </Row>
           </StyledContainerL2>

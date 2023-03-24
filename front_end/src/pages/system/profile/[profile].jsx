@@ -2,10 +2,17 @@ import Layout from "../../../components/layout";
 import Image from "next/image";
 import { getAPIClient } from "../../../services/axios";
 import styled from "styled-components";
-import { Box, Grid, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Grid, Tab, Tabs, Typography, tabsClasses } from "@mui/material";
 import { useState } from "react";
 
 import ImageGrid from "../../../components/imageGrid";
+import {
+  PersonPin,
+  PhotoLibrary,
+  ThumbUp,
+  Bookmark,
+} from "@mui/icons-material";
+import { TabContext, TabList, TabPanel } from "@material-ui/lab";
 
 const CoverImage = styled(Image)`
   border-radius: 10px;
@@ -30,56 +37,43 @@ const ProfileImage = styled.div`
   gap: 20px;
 `;
 
-const ProfileData = styled.div`
-  display: grid;
-  align-items: center;
-  grid-template-columns: auto auto auto;
-
-  grid-template-areas:
-    "Name Data"
-    "Username Data";
-  h1 {
-    grid-area: Name;
-    color: var(--text);
-  }
-  h2 {
-    grid-area: Username;
-    color: var(--opacity);
-  }
+const ProfileData = styled(Grid)`
+  color: var(--text);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  background-color: var(--primary);
+  border-radius: 10px;
+  padding: 10px;
   div {
-    grid-area: Data;
-    justify-content: space-around;
-    width: auto;
     display: flex;
-    flex-direction: row;
-
-    background-color: var(--primary);
-    border-radius: 10px;
-    padding: 10px 20px;
-
-    div {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      span {
-        color: var(--white);
-      }
-      span:first-child {
-        font-size: 2rem;
-        font-weight: 700;
-      }
-      span:last-child {
-        font-size: 1rem;
-        font-weight: 600;
-      }
+    flex-direction: column;
+    align-items: center;
+    span {
+      color: var(--white);
+    }
+    span:first-child {
+      font-size: 2rem;
+      font-weight: 700;
+    }
+    span:last-child {
+      font-size: 1rem;
+      font-weight: 600;
     }
   }
 `;
 
 const CustomTabs = styled(Box)`
-  margin: 20px 0;
-  background-color: var(--input);
-  border-radius: 10px;
+  /* width: 300px; */
+  div.MuiBox-root {
+    border: none;
+  }
+  div.MuiTabs-root {
+    margin: 20px 0;
+    background-color: var(--input);
+    border-radius: 10px;
+  }
+  /* width: 300px; */
   button {
     color: var(--text);
   }
@@ -89,62 +83,30 @@ const CustomTabs = styled(Box)`
     background-color: var(--primary);
     color: var(--white);
   }
+  span.MuiTabs-indicator {
+    display: none;
+  }
 `;
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-
 export default function Profile({ profile, posts }) {
-  const [tabs, setTabs] = useState(0);
+  const [value, setValue] = useState("1");
 
-  function a11yProps(index) {
-    return {
-      id: `simple-tab-${index}`,
-      "aria-controls": `simple-tabpanel-${index}`,
-    };
-  }
-
-  const handleChangeTabs = (event, newValue) => {
-    setTabs(newValue);
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
   };
 
   return (
     <Layout title={`Profile`}>
-      <Grid container>
-        <Grid md={12} xs={12}>
+      <Grid container alignItems={"center"}>
+        <Grid item md={12} xs={12}>
           <CoverImage
             src={`${process.env.BACK_END}/image/${profile?.cover}`}
             layout="intrinsic"
             height={500}
             width={1920}
-            className="WithBackground"
           />
         </Grid>
-      </Grid>
-      <Grid
-        container
-        direction="row"
-        justifyContent="flex-start"
-        alignItems="center"
-      >
-        <Grid md={2} xs={12}>
+        <Grid item md={1} xs={2}>
           <ProfileImage>
             <Image
               src={`${process.env.BACK_END}/image/${profile?.avatar}`}
@@ -155,55 +117,66 @@ export default function Profile({ profile, posts }) {
             />
           </ProfileImage>
         </Grid>
-
-        <Grid md={10} xs={12}>
-          <ProfileData>
-            <h1>{profile?.name}</h1>
-            <h2>@{profile?.username}</h2>
-            <div>
-              <div>
-                <span>123K</span>
-                <span>Followers</span>
-              </div>
-              <div>
-                <span>123K</span>
-                <span>Followers</span>
-              </div>
-              <div>
-                <span>123K</span>
-                <span>Followers</span>
-              </div>
-            </div>
-          </ProfileData>
+        <Grid item md={8} xs={10}>
+          <Typography>{profile?.name}</Typography>
+          <Typography>@{profile?.username}</Typography>
         </Grid>
-
-        <Grid xs={12}>
-          <CustomTabs>
-            <Tabs
-              value={tabs}
-              onChange={handleChangeTabs}
-              aria-label="basic tabs example"
-              variant="fullWidth"
-              indicatorColor="transparent"
-            >
-              <Tab label="Posts" {...a11yProps(0)} />
-              <Tab label="Tagged" {...a11yProps(1)} />
-              <Tab label="Likes" {...a11yProps(2)} />
-              <Tab label="Bookmarks" {...a11yProps(3)} />
-            </Tabs>
+        <ProfileData item md={3} xs={12}>
+          <div>
+            <span>123K</span>
+            <span>Followers</span>
+          </div>
+          <div>
+            <span>123K</span>
+            <span>Followers</span>
+          </div>
+          <div>
+            <span>123K</span>
+            <span>Followers</span>
+          </div>
+        </ProfileData>
+        <Grid item md={12} xs={12}>
+          <CustomTabs xs={{ width: "200px" }}>
+            <TabContext value={value}>
+              <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                <TabList
+                  onChange={handleChange}
+                  aria-label="lab API tabs example"
+                >
+                  <Tab
+                    icon={<PhotoLibrary />}
+                    iconPosition="start"
+                    label="Posts"
+                    value="1"
+                  />
+                  <Tab
+                    label="Tagged"
+                    value="2"
+                    icon={<PersonPin />}
+                    iconPosition="start"
+                  />
+                  <Tab
+                    label="Liked"
+                    value="3"
+                    icon={<ThumbUp />}
+                    iconPosition="start"
+                  />
+                  <Tab
+                    label="Bookmark"
+                    value="4"
+                    icon={<Bookmark />}
+                    iconPosition="start"
+                  />
+                </TabList>
+              </Box>
+              <TabPanel value="1">
+                <ImageGrid postList={posts} />
+              </TabPanel>
+              <TabPanel value="2">Item Two</TabPanel>
+              <TabPanel value="3">Item Three</TabPanel>
+              <TabPanel value="4">Item Four</TabPanel>
+            </TabContext>
           </CustomTabs>
-          <TabPanel value={tabs} index={0}>
-            <ImageGrid postList={posts} />
-          </TabPanel>
-          <TabPanel value={tabs} index={1}>
-            Tagged
-          </TabPanel>
-          <TabPanel value={tabs} index={2}>
-            Likes
-          </TabPanel>
-          <TabPanel value={tabs} index={3}>
-            Bookmarks
-          </TabPanel>
         </Grid>
       </Grid>
     </Layout>
