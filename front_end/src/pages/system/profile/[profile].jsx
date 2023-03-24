@@ -2,7 +2,7 @@ import Layout from "../../../components/layout";
 import Image from "next/image";
 import { getAPIClient } from "../../../services/axios";
 import styled from "styled-components";
-import { Box, Grid, Tab, Tabs, Typography, tabsClasses } from "@mui/material";
+import { Box, Grid, Tab, Typography } from "@mui/material";
 import { useState } from "react";
 
 import ImageGrid from "../../../components/imageGrid";
