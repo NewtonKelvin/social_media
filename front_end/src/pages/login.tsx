@@ -1,70 +1,67 @@
 //Next and React
-import { useContext, useState } from "react"
-import Head from "next/head"
-import Link from "next/link"
-import { useForm, SubmitHandler } from "react-hook-form"
-import { useRouter } from "next/router"
+import { useContext, useState } from "react";
+import Head from "next/head";
+import Link from "next/link";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { useRouter } from "next/router";
 //Context
-import { AlertContext, ThemeContext } from "./_app"
-import { useAuth } from '../context/AuthContext'
+import { AlertContext, ThemeContext } from "./_app";
+import { useAuth } from "../context/AuthContext";
 //Packages
-import { Col, Row } from "react-bootstrap"
+import { Col, Row } from "react-bootstrap";
 //Style
-import StyledContainerL2, { StyledContainerR } from "../styles/login"
+import StyledContainerL2, { StyledContainerR } from "../styles/login";
 //Components
-import StyledInput from "../components/input"
-import StyledButton from "../components/button"
-import StyledSwitch from "../components/switch"
-import StyledBrand from "../components/brand"
+import StyledInput from "../components/input";
+import StyledButton from "../components/button";
+import StyledSwitch from "../components/switch";
+import StyledBrand from "../components/brand";
 //Icons
-import { AccountCircle, Fingerprint, Brightness3, WbSunny } from "@mui/icons-material"
+import {
+  AccountCircle,
+  Fingerprint,
+  Brightness3,
+  WbSunny,
+} from "@mui/icons-material";
 
 export default function Login() {
+  const { toggleTheme, isDark } = useContext(ThemeContext);
+  const { handleAlertOpen, handleAlertMessage, handleAlertSeverity } =
+    useContext(AlertContext);
+  const { signIn } = useAuth();
 
-  const { toggleTheme, isDark } = useContext(ThemeContext)
-  const { handleAlertOpen, handleAlertMessage, handleAlertSeverity } = useContext(AlertContext)
-  const { signIn } = useAuth()
-  
-  const router = useRouter()
+  const router = useRouter();
 
   interface FormValues {
-    username: string,
-    password: string
+    username: string;
+    password: string;
   }
 
-  const [errors, setErrors] = useState('')
+  const [errors, setErrors] = useState("");
 
-  const { register, handleSubmit, reset } = useForm<FormValues>()
+  const { register, handleSubmit, reset } = useForm<FormValues>();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    const response = await signIn(data);
+    if (response) {
+      if (response.error === false) {
+        handleAlertSeverity("success");
+        handleAlertMessage(response.message);
+        setErrors("");
+        handleAlertOpen(true);
 
-    const response = await signIn(data)
-    if(response){
-      
-      if(response.error === false){
-      
-        handleAlertSeverity('success')
-        handleAlertMessage(response.message)
-        setErrors('')
-        handleAlertOpen(true)
-  
-        reset()
+        reset();
         setTimeout(() => {
-          router.push('/feed')
-        }, 3000)
-  
+          router.push("/feed");
+        }, 3000);
       } else {
-  
-        handleAlertSeverity('error')
-        handleAlertMessage(response.message)
-        setErrors(response.field)
-        handleAlertOpen(true)
-  
+        handleAlertSeverity("error");
+        handleAlertMessage(response.message);
+        setErrors(response.field);
+        handleAlertOpen(true);
       }
-
     }
-
-  }
+  };
 
   return (
     <>
@@ -76,13 +73,15 @@ export default function Login() {
         <Col xl={6} style={{ padding: "0" }}>
           <StyledContainerL2 isDark={isDark}>
             <Row>
-
               <Col>
                 <StyledSwitch
                   iconLeft={<WbSunny />}
                   iconRight={<Brightness3 />}
                   checked={isDark}
-                  onChange={() => {toggleTheme(); reset()}}
+                  onChange={() => {
+                    toggleTheme();
+                    reset();
+                  }}
                 />
               </Col>
 
@@ -91,13 +90,13 @@ export default function Login() {
                 style={{ display: "flex", flexDirection: "column" }}
               >
                 <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
-
                   <StyledBrand />
 
                   <StyledInput>
-                    <label>Username:</label>
+                    <label htmlFor="username">Username:</label>
                     <AccountCircle />
                     <input
+                      id="username"
                       type="text"
                       placeholder="Insert your username..."
                       aria-invalid={errors == "username" ? "true" : "false"}
@@ -106,9 +105,10 @@ export default function Login() {
                   </StyledInput>
 
                   <StyledInput>
-                    <label>Password:</label>
+                    <label htmlFor="password">Password:</label>
                     <Fingerprint />
                     <input
+                      id="password"
                       type="password"
                       placeholder="Insert your password..."
                       aria-invalid={errors == "password" ? "true" : "false"}
