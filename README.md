@@ -6,7 +6,7 @@ Seja bem-vindo!
 
 ## Propósito
 
-O **propósito** inicial deste projeto é o **estudo** e também para exibir meu nível de **conhecimento**, aplicando todo (ou quase todo) o conhecimento adquirido em Javascript, mais especificamente em **ReactJS** e **NodeJS**. Este repositório também será utilizado para consultas de código e referências!
+O **propósito** inicial deste projeto é **estudar** ferramentas e comprovar meu nível de **conhecimento**, aplicando todo (ou quase todo) meu conhecimento adquirido, mais especificamente em **ReactJS** e **NodeJS**. Este repositório também será utilizado para consultas de código e referências!
 
 ## Design
 
