@@ -1,71 +1,70 @@
 //Next and React
-import { useContext, useState } from "react"
-import Head from "next/head"
-import Link from "next/link"
-import { useRouter } from "next/router"
-import { useForm, SubmitHandler } from "react-hook-form"
+import { useContext, useState } from "react";
+import Head from "next/head";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useForm, SubmitHandler } from "react-hook-form";
 //Context
-import { ThemeContext, AlertContext } from "./_app"
+import { ThemeContext, AlertContext } from "./_app";
 //API
-import { api } from '../services/api'
+import { api } from "../services/api";
 //Packages
-import { Box, Grid, Snackbar } from "@mui/material"
-import Slide from '@mui/material/Slide'
-import { Alert, Color } from '@material-ui/lab'
-import { Col, Row } from "react-bootstrap"
+import { Col, Row } from "react-bootstrap";
 //Style
-import { StyledContainerL, StyledContainerR } from "../styles/login"
+import { StyledContainerL, StyledContainerR } from "../styles/login";
 //Components
-import StyledInput from "../components/input"
-import StyledButton from "../components/button"
-import StyledSwitch from "../components/switch"
-import StyledBrand from "../components/brand"
+import StyledInput from "../components/input";
+import StyledButton from "../components/button";
+import StyledSwitch from "../components/switch";
+import StyledBrand from "../components/brand";
 //Icons
-import { AccountCircle, Fingerprint, Tag, Mail, Brightness3, WbSunny } from "@mui/icons-material"
+import {
+  AccountCircle,
+  Tag,
+  Mail,
+  Brightness3,
+  WbSunny,
+} from "@mui/icons-material";
 
 export default function Register() {
+  const { theme, toggleTheme, isDark } = useContext(ThemeContext);
+  const { handleAlertOpen, handleAlertMessage, handleAlertSeverity } =
+    useContext(AlertContext);
 
-  const { theme, toggleTheme, isDark } = useContext(ThemeContext)
-  const { handleAlertOpen, handleAlertMessage, handleAlertSeverity } = useContext(AlertContext)
-  
-  const router = useRouter()
+  const router = useRouter();
 
   interface FormValues {
-    username: string,
-    name: string,
-    email: string
+    username: string;
+    name: string;
+    email: string;
   }
 
-  const [errors, setErrors] = useState('')
+  const [errors, setErrors] = useState("");
 
-  const { register, handleSubmit, reset } = useForm<FormValues>()
+  const { register, handleSubmit, reset } = useForm<FormValues>();
 
-  const onSubmit: SubmitHandler<FormValues> = async (data:FormValues) => {
+  const onSubmit: SubmitHandler<FormValues> = async (data: FormValues) => {
+    const response: any = await api
+      .post("/register", data)
+      .then((response) => {
+        handleAlertSeverity("success");
+        handleAlertMessage(response.data.message);
+        setErrors("");
+        handleAlertOpen(true);
 
-    const response:any = await api.post('/register', data)
-    .then((response) => {
-      
-      handleAlertSeverity('success')
-      handleAlertMessage(response.data.message)
-      setErrors('')
-      handleAlertOpen(true)
+        reset();
+        setTimeout(() => {
+          router.push("/login");
+        }, 3000);
+      })
+      .catch(({ response }) => {
+        handleAlertSeverity("error");
+        handleAlertMessage(response.data.message);
+        setErrors(response.data.field);
+        handleAlertOpen(true);
+      });
+  };
 
-      reset()
-      setTimeout(() => {
-        router.push('/login')
-      }, 3000)
-      
-    }).catch(({response}) => {
-
-      handleAlertSeverity('error')
-      handleAlertMessage(response.data.message)
-      setErrors(response.data.field)
-      handleAlertOpen(true)
-
-    })
-
-  }
-  
   return (
     <>
       <Head>
@@ -76,13 +75,15 @@ export default function Register() {
         <Col xl={6} style={{ padding: "0" }}>
           <StyledContainerL>
             <Row>
-
               <Col>
                 <StyledSwitch
                   iconLeft={<WbSunny />}
                   iconRight={<Brightness3 />}
                   checked={isDark}
-                  onChange={() => {toggleTheme(); reset()}}
+                  onChange={() => {
+                    toggleTheme();
+                    reset();
+                  }}
                 />
               </Col>
 
@@ -91,43 +92,47 @@ export default function Register() {
                 style={{ display: "flex", flexDirection: "column" }}
               >
                 <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
-
                   <StyledBrand />
 
                   <StyledInput>
-                    <label>Name:</label>
+                    <label htmlFor="name">Name:</label>
                     <AccountCircle />
                     <input
+                      id="name"
                       type="text"
                       placeholder="Insert your name..."
-                      aria-invalid={(errors == "name") ? "true" : "false"}
+                      aria-invalid={errors == "name" ? "true" : "false"}
                       {...register("name")}
                     />
                   </StyledInput>
 
                   <StyledInput>
-                    <label>Username:</label>
+                    <label htmlFor="username">Username:</label>
                     <Tag />
                     <input
+                      id="username"
                       type="text"
                       placeholder="Insert your username..."
-                      aria-invalid={(errors == "username") ? "true" : "false"}
+                      aria-invalid={errors == "username" ? "true" : "false"}
                       {...register("username")}
                     />
                   </StyledInput>
 
                   <StyledInput>
-                    <label>Email:</label>
+                    <label htmlFor="email">Email:</label>
                     <Mail />
                     <input
+                      id="email"
                       type="email"
                       placeholder="Insert your email..."
-                      aria-invalid={(errors == "email") ? "true" : "false"}
+                      aria-invalid={errors == "email" ? "true" : "false"}
                       {...register("email")}
                     />
                   </StyledInput>
 
-                  <Link href="/login">Remembered your password? Click here</Link>
+                  <Link href="/login">
+                    Remembered your password? Click here
+                  </Link>
 
                   <StyledButton>
                     <button type="submit">Register</button>

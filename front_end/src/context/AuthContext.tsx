@@ -78,8 +78,10 @@ export const AuthProvider = ({ children }: PropsType) => {
             Router.push("/login");
           });
       } else {
-        deleteUser();
-        Router.push("/login");
+        if (router.pathname.includes("/system/")) {
+          deleteUser();
+          Router.push("/login");
+        }
       }
 
       setLoading(false);
