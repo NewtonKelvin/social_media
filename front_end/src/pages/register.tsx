@@ -27,7 +27,7 @@ import {
 } from "@mui/icons-material";
 
 export default function Register() {
-  const { theme, toggleTheme, isDark } = useContext(ThemeContext);
+  const { toggleTheme, isDark } = useContext(ThemeContext);
   const { handleAlertOpen, handleAlertMessage, handleAlertSeverity } =
     useContext(AlertContext);
 
@@ -44,7 +44,7 @@ export default function Register() {
   const { register, handleSubmit, reset } = useForm<FormValues>();
 
   const onSubmit: SubmitHandler<FormValues> = async (data: FormValues) => {
-    const response: any = await api
+    await api
       .post("/register", data)
       .then((response) => {
         handleAlertSeverity("success");
